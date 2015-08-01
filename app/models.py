@@ -69,7 +69,7 @@ class UserProfile(User):
        Following fields come from User.
        first_name, last_name, password, email, username, date_joined, is_active"""
 
-    mobile  = StringField(max_length=10, verbose_name="Mobile Number:", help_text="Please enter your mobile number.")
+    mobile  = StringField(max_length=10, required=True, verbose_name="Mobile Number:", help_text="Please enter your mobile number.")
     address = EmbeddedDocumentField(Address)
     gender  = StringField(max_length=2, choices=GENDER_CHOICES, verbose_name="Gender:", help_text="Please select your gender.")
     dob     = DateTimeField(verbose_name="Date of Birth:", help_text="Please enter your birth date.")

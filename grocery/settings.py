@@ -40,7 +40,7 @@ INSTALLED_APPS = (
     'mongoengine.django.mongo_auth',
     'widget_tweaks',
     'django_forms_bootstrap',
-    'crispy_forms',
+    #'crispy_forms',
     #'djangular',
     'app',
 )
