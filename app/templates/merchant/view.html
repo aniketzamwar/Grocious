@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>Main Page</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<style>
+body {
+  padding: 20px;
+}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Grocious Merchandise</a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav">
+        <li><a href="/merchant/main/">Home</a></li>
+        <li class="active"><a href="#">View All</a></li>
+        </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/merchant/logout/">Logout</a></li>
+      </ul>
+      <p class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">{{ merchant }}</a></p>
+    </div>
+  </div>
+</nav>
+<br/>
+{% if products %}
+ <table id="products" class="table table-striped table-bordered table-hover">
+  <tr>
+	 <th>Name</th>
+	 <th>Quantity</th>
+	 <th>Unit</th>
+	 <th>Price</th>
+	 <th>Manufacturer</th>
+	 <th>Description</th>
+	 <th>URL</th>
+	 <th>Stock</th>
+	 <th>Availability</th>
+  </tr>
+  {% for p in products %}
+ 	<tr>
+		<td>{{ p.name }}</td>
+		<td>{{ p.quantity }}</td>
+		<td>{{ p.unit }}</td>
+		<td>{{ p.price }}</td>
+		<td>{{ p.manufacturer.manufacturer_name }}</td>
+		<td>{{ p.desc }}</td>
+		<td>{{ p.product_url }}</td>
+		<td>{{ p.stock_units }}</td>
+		<td>{{ p.is_available }}</td>
+ 	</tr>
+ {% endfor %}
+ </table>
+{% endif %}
+<footer class="footer">
+  <div class="container">
+    <p class="text-muted">Copyright Grocious</p>
+  </div>
+</footer>
+</body>
+</html>

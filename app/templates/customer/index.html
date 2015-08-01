@@ -1,0 +1,108 @@
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load bootstrap_tags %}
+<html>
+<head>
+  <title>Index</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <style>
+  .table tbody>tr>td.vert-align {
+    vertical-align: middle;
+  }
+  .brand-name {
+    margin-left: 2px;
+    padding-left: 2px;
+    border-left: 2px;
+  }
+  </style>
+</head>
+<body role="document">
+  <nav class="navbar navbar-inverse">
+    <div class="container container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/index/"><img alt="Brand" width="25" height="25" class="pull-left brand-icon" src="{% static 'carrito-best-md.png' %}" /><span class="brand-name">Grocious</span></a>
+      </div>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="/create/"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+        <li><a href="#" data-toggle="modal" data-target="#login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container">
+    {% if messages %}
+    <div class="row">
+      <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {% for message in messages %}
+        <p>{{message}}</p>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="jumbotron">
+      <h1>Welcome to Grocious!!</h1>
+      <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+      <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+    </div>
+  </div>
+  <footer class="footer">
+    <div class="container">
+      <p class="text-muted">Copyright Grocious</p>
+    </div>
+  </footer>
+  <!--div class="modal fade" id="newMerchant" tabindex="-1" role="dialog" aria-labelledby="newMerchant" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+  <div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <h4 class="modal-title" id="myModalLabel1">Create User</h4>
+  </div>
+  <div class="modal-body">
+  {% if userForm %}
+  <form  action="/create/" method="POST" class="form-horizontal">{% csrf_token %}
+  <table class="table">
+  {{ userForm.as_table }}
+  {{ addressForm.as_table }}
+  <tr><th></th><td><input type="submit" value="Create" class="btn btn-primary"/></td></tr>
+  </table>
+  </form>
+  {% endif %}
+  </div>
+  <div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  </div>
+  </div>
+  </div>
+  </div-->
+  <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel2">Login</h4>
+        </div>
+        <div class="modal-body">
+          <form action="/login/" method="POST" class="form-vertical">{% csrf_token %}
+            {{ loginForm|as_bootstrap }}
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

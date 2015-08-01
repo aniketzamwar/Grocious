@@ -1,0 +1,183 @@
+<script>
+$(document).ready(function() {
+    $('#gender').editable({
+        source: [
+            {value: "ML", text: 'Male'},
+            {value: "FL", text: 'Female'}
+        ],
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg;
+        },
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+            var data = {};
+            data['id'] = params.pk;
+            data[params.name] = params.value;
+            data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+            console.log(data);
+            return data;
+        }
+    });
+
+    var cities = {{cities}};
+    $('#city').editable({
+        source: cities,
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg;
+        },
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+            var data = {};
+            data['id'] = params.pk;
+            data[params.name] = params.value;
+            data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+            console.log(data);
+            return data;
+        }
+    });
+
+    var states = {{states}};
+    $('#state').editable({
+        source: states,
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg;
+        },
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+            var data = {};
+            data['id'] = params.pk;
+            data[params.name] = params.value;
+            data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+            console.log(data);
+            return data;
+        }
+    });
+
+    var countries = {{countries}};
+    $('#country').editable({
+        source: countries,
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg;
+        },
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+            var data = {};
+            data['id'] = params.pk;
+            data[params.name] = params.value;
+            data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+            console.log(data);
+            return data;
+        }
+    });
+
+    $('.myeditable').editable({
+        validate: function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        },
+        success: function(response, newValue) {
+            if(response.status == 'error') return response.msg;
+        },
+        params: function(params) {  //params already contain `name`, `value` and `pk`
+            var data = {};
+            data['id'] = params.pk;
+            data[params.name] = params.value;
+            data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+            console.log(data);
+            return data;
+        }
+    });
+});
+</script>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="myModalLabel">My Info</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-8"> {% csrf_token %}
+            <table class="table">
+                <tr>
+                    <th>Username</th>
+                    <!--td>{{user.username}}</td-->
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="username" data-pk="1" data-url="/user/update/username" data-type="text" data-name="username" data-original-title="Enter username">{{user.username}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>First Name</th>
+                    <!--td>{{user.first_name}}</td-->
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="fname" data-pk="2" data-type="text" data-url="/user/update/fname" data-name="fname" data-original-title="Enter First Name">{{user.first_name}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Last Name</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="lname" data-pk="3" data-type="text" data-url="/user/update/lname" data-name="lname" data-original-title="Enter Last Name">{{user.last_name}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="email" data-pk="4" data-type="email" data-url="/user/update/email" data-name="email" data-original-title="Enter Email">{{user.email}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Mobile</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="mobile" data-pk="5" data-type="text" data-url="/user/update/mobile" data-name="mobile" data-original-title="Enter Mobile Number">{{user.mobile}}</a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Gender</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="gender" data-pk="6" data-type="select" data-url="/user/update/gender" data-value="{{user.gender}}" data-name="gender" data-original-title="Select Gender"></a>
+                    </td>
+                </tr>
+            </table>
+            <h4>Address Info</h4>
+            <table class="table">
+                <tr>
+                    <th>Line 1</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="addressLine1" data-type="text" data-name="addressLine1" data-original-title="Enter Address Line 1">{{user.address.line1}}</a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Line 2</th>
+                    <td>
+                        {% if user.address.line2 %}
+                        <a href="#" class="myeditable editable editable-click" id="addressLine2" data-type="text" data-name="addressLine2" data-original-title="Enter Address Line 2">{{user.address.line2}}</a>
+                        {% else %}
+                        <a href="#" class="myeditable editable editable-click editable-empty" id="addressLine2" data-type="text" data-name="addressLine2" data-original-title="Enter Address Line 2"></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>City</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="city" data-type="select" data-value="{{user.address.city}}" data-name="city" data-original-title="Select City" title data-title></a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>State</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="state" data-type="select" data-value="{{user.address.state}}" data-name="state" data-original-title="Select State" title data-title></a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Country</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="country" data-type="select" data-value="{{user.address.country}}" data-name="country" data-original-title="Select Country" title data-title></a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Pin Code</th>
+                    <td>
+                        <a href="#" class="myeditable editable editable-click" id="pincode" data-type="text" data-name="pincode" data-original-title="Enter pincode">{{user.address.pincode}}</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>
