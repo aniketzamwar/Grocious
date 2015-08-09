@@ -63,7 +63,7 @@ class ProductForm(DocumentForm):
 	price = forms.CharField()
 	desc = forms.CharField(widget=forms.Textarea)
 	is_available =  forms.BooleanField(widget=forms.Select(choices=AVAILABILITY_CHOICES), required=False)
-	product_url = forms.URLField()
+	# product_url = forms.URLField()   # No product url needed
 	stock_units = forms.CharField()
 	#manufacturer = forms.ChoiceField(widget=forms.Select, choices=get_manufacturers())
 

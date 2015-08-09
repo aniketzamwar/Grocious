@@ -180,7 +180,7 @@ class Product(Document):
     date_added        = DateTimeField(required=True)
     date_modified     = DateTimeField(required=True)
     is_available      = BooleanField(required=True, verbose_name="Is product available:", help_text="Please select if product is available.")
-    product_url       = URLField(verbose_name="Product Link", help_text="Please provide product link for reference.")
+    product_url       = URLField(verbose_name="Product Link", help_text="Please provide product link for reference.") #todo remove this later
     stock_units       = IntField(verbose_name="Please enter number of units of quantity above", help_text="Please enter positive integer.")
     merchant_id       = ReferenceField(Merchant)
     category          = ReferenceField(Category)

@@ -42,7 +42,7 @@
         <th>Price</th>
         <th>Manufacturer</th>
         <th>Description</th>
-        <th>URL</th>
+        <!--th>URL</th-->
         <th>Stock</th>
         <th>Availability</th>
         <th>Category</th>
@@ -56,7 +56,7 @@
         <td><a href="#" class="myeditable editable editable-click price" data-pk="4" data-url="/merchant/update/product/price/{{ p.id }}" data-type="text" data-name="price" data-original-title="Enter product price">{{p.price}}</a></td>
         <td><a href="#" class="myeditable editable editable-click manufacturer" data-pk="5" data-type="select" data-url="/merchant/update/product/manufacturer/{{ p.id }}" data-value="{{p.manufacturer.id}}" data-name="manufacturer" data-original-title="Select manufacturer"></a></td>
         <td><a href="#" class="myeditable editable editable-click desc" data-pk="6" data-url="/merchant/update/product/desc/{{ p.id }}" data-type="textarea" data-name="desc" data-original-title="Enter product description">{{p.desc}}</a></td>
-        <td><a href="#" class="myeditable editable editable-click producturl" data-pk="7" data-url="/merchant/update/product/producturl/{{ p.id }}" data-type="text" data-name="producturl" data-original-title="Enter product Url">{{p.product_url}}</a></td>
+        <!--td><a href="#" class="myeditable editable editable-click producturl" data-pk="7" data-url="/merchant/update/product/producturl/{{ p.id }}" data-type="text" data-name="producturl" data-original-title="Enter product Url">{{p.product_url}}</a></td-->
         <td><a href="#" class="myeditable editable editable-click stockunits" data-pk="8" data-url="/merchant/update/product/stockunits/{{ p.id }}" data-type="text" data-name="stockunits" data-original-title="Enter product stock units">{{p.stock_units}}</a></td>
         <td><a href="#" class="myeditable editable editable-click isavailable" data-pk="9" data-type="select" data-url="/merchant/update/product/isavailable/{{ p.id }}" data-value="{{p.is_available}}" data-name="isavailable" data-original-title="Select Availability"></a></td>
         {% if p.category %}
@@ -94,7 +94,7 @@
           </div>
           <div class="modal-body">
             <div class="container forms">
-              <div class="row">
+              <div class="row small">
                 <div class="col-md-offset-1 col-md-4">
                   <div class="forms">
                     <h3>Add Product</h3>
@@ -130,8 +130,8 @@
 
     $('.isavailable').editable({
       source: [
-        {value: "True", text: 'True'},
-        {value: "False", text: 'False'}
+        {value: "True", text: 'Yes'},
+        {value: "False", text: 'No'}
       ],
       placement: "right",
       success: function(response, newValue) {
