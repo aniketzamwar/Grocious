@@ -69,7 +69,7 @@ class UserProfile(User):
        Following fields come from User.
        first_name, last_name, password, email, username, date_joined, is_active"""
 
-    mobile  = StringField(max_length=10, required=True, verbose_name="Mobile Number:", help_text="Please enter your mobile number.")
+    mobile  = StringField(max_length=10, verbose_name="Mobile Number:", help_text="Please enter your mobile number.")
     address = EmbeddedDocumentField(Address)
     gender  = StringField(max_length=2, choices=GENDER_CHOICES, verbose_name="Gender:", help_text="Please select your gender.")
     dob     = DateTimeField(verbose_name="Date of Birth:", help_text="Please enter your birth date.")
@@ -83,7 +83,69 @@ class Manufacturer(Document):
     manufacturer_name = StringField(required=True, max_length=50, verbose_name="Manufacturer:", help_text="Please enter manufacturer name.")
     manufacturer_url  = URLField()
     manufacturer_desc = StringField(required=True, max_length=200, verbose_name="Manufacturer Description", help_text="Please enter manufacturer description.")
+###############################################################################################################
 
+CATEGORY_TYPE = (
+    "Raw Material",
+    "Ready Steady Go",
+    "Desserts",
+    "Dare & Care"
+)
+
+CATEGORY_NAME = {
+    CATEGORY_TYPE[0] : (
+        "Grains",
+        "Pulses & Grams",
+        "Flour (Atta)",
+        "Condiments & Spices",
+        "Baking Needs",
+        "Frozen & Canned",
+        "Oil & Ghee",
+        "Salt & Sugar",
+        "Nuts & Oilseeds",
+        "Others (Poha, Rawa, Corn Flakes, etc.)"
+    ),
+    CATEGORY_TYPE[1] : (
+        "Ready to Eat",
+        "Snacks",
+        "Fresh Baked",
+        "Pickles",
+        "Dairy",
+        "Beverages",
+        "Breakfast Food",
+        "Dried Food Items",
+        "Dry Fruits",
+        "Condiments & Sauces"
+    ),
+    CATEGORY_TYPE[2] : (
+        "Sweets",
+        "Chocoloates & Candies",
+        "Ice Cream",
+        "Fruit Juices (Soda)"
+    ),
+    CATEGORY_TYPE[3] : (
+        "Health Care",
+        "Personal Care",
+        "Body Care",
+        "House & Kitchen Care"
+    ),
+}
+
+'''
+## This is to import the catefory to data store
+
+import pymongo
+connection = pymongo.MongoClient("mongodb://localhost")
+db = connection.sample_database
+collection = db.category
+for key, value in CATEGORY_NAME.iteritems():
+    for c in value:
+        collection.insert({ "category_type" : c, "category_name" : key })
+'''
+
+class Category(Document):
+    category_type = StringField(required=True, verbose_name="Category Type")
+    category_name = StringField(required=True, verbose_name="Category Name")
 
 ###############################################################################################################
 class Merchant(UserProfile):
@@ -101,11 +163,11 @@ class Merchant(UserProfile):
 
 ###############################################################################################################
 UNIT_CHOICES = (
-  ("KG","Kilogram"),
-  ("GM","Gram"),
-  ("LT","Litre"),
-  ("PK","Pack"),
-  ("OT","Other"),
+  ('KG','Kilogram'),
+  ('GM','Gram'),
+  ('LT','Litre'),
+  ('PK','Pack'),
+  ('OT','Other'),
 )
 
 class Product(Document):
@@ -121,6 +183,7 @@ class Product(Document):
     product_url       = URLField(verbose_name="Product Link", help_text="Please provide product link for reference.")
     stock_units       = IntField(verbose_name="Please enter number of units of quantity above", help_text="Please enter positive integer.")
     merchant_id       = ReferenceField(Merchant)
+    category          = ReferenceField(Category)
     #product_images =
 
     meta = {'indexes': [

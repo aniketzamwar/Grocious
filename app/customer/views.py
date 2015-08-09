@@ -14,7 +14,6 @@ from forms import UserProfileForm, AddressForm, LoginForm
 from app.models import UserProfile, Product
 from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_OPTION_CHOICES_AND_CHARGES
 
-
 CITY_CHOICES_SELECT = []
 for city in CITY_CHOICES:
     CITY_CHOICES_SELECT.append({"value": city[0], "text": city[1]})

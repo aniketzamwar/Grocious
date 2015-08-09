@@ -24,4 +24,6 @@ urlpatterns = patterns('',
     ('^merchant/mCreate/$', merchant_views.createManufacturer),
     ('^merchant/pCreate/$', merchant_views.createProduct),
     ('^merchant/viewAll/$', merchant_views.viewProducts),
+    ('^merchant/update/product/([\w]+)/([\d\w]+)$', merchant_views.updateProduct),
+    ('^merchant/product/delete/([\d\w]+)$', merchant_views.deleteProduct),
 )

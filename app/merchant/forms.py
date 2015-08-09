@@ -12,7 +12,7 @@ class MerchantForm(DocumentForm):
 	password   = forms.CharField(widget=forms.PasswordInput, required=True)
 	email      = forms.EmailField(required=True)
 	username   = forms.CharField(widget=forms.TextInput, required=True)
-	
+
 	class Meta:
 		document=Merchant
 		fields=['merchant_name', 'contact_number', 'merchant_url', 'first_name', 'last_name', 'password', 'email', 'username', 'address',]
@@ -43,17 +43,25 @@ class ProductForm(DocumentForm):
 			manufacturer_choices.append(m)
 		return manufacturer_choices
 
+	@staticmethod
+	def get_categories():
+		category_choices = []
+		for category in Category.objects:
+			c = [category.id, category.category_name + " - " + category.category_type]
+			category_choices.append(c)
+		return category_choices
+
 	def __init__(self, *args, **kwargs):
 		super(ProductForm, self).__init__(*args, **kwargs)
 		self.fields['manufacturer_id'] = forms.ChoiceField(widget=forms.Select, choices=ProductForm.get_manufacturers(), label="Manufacturer")
-
+		self.fields['category_id'] = forms.ChoiceField(widget=forms.Select, choices=ProductForm.get_categories(), label="Category")
 
 	AVAILABILITY_CHOICES = ((True,'Available'), (False, 'Not Available'),)
 	name = forms.CharField()
 	quantity = forms.CharField()
 	unit = forms.ChoiceField(widget=forms.Select, choices=UNIT_CHOICES)
 	price = forms.CharField()
-	desc = forms.CharField()
+	desc = forms.CharField(widget=forms.Textarea)
 	is_available =  forms.BooleanField(widget=forms.Select(choices=AVAILABILITY_CHOICES), required=False)
 	product_url = forms.URLField()
 	stock_units = forms.CharField()
@@ -61,13 +69,14 @@ class ProductForm(DocumentForm):
 
 	class Meta:
 		document=Product
-		fields=['name', 'quantity', 'unit', 'price', 'desc', 'weight', 'is_available', 'product_url', 'stock_units', 'manufacturer_id',]
+		fields=['name', 'quantity', 'unit', 'price', 'desc', 'weight', 'is_available', 'product_url', 'stock_units', 'manufacturer_id', 'category_id',]
 
 	def save(self, merchant, commit):
 		'''
 		'''
 		product = super(ProductForm, self).save(commit=False)
 		product.manufacturer = Manufacturer.objects.get(id=self.cleaned_data['manufacturer_id'])
+		product.category = Category.objects.get(id=self.cleaned_data['category_id'])
 		product.merchant_id = merchant
 		product.date_added = datetime.datetime.now()
 		product.date_modified = datetime.datetime.now()

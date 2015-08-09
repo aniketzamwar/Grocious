@@ -1,70 +1,83 @@
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% load bootstrap_tags %}
 <html>
 <head>
-    <title>Main Page</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <style>
-    </style>
+  <title>Main Page</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+  <style>
+  </style>
 </head>
 <body role="document">
-<nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-inverse">
     <div class="container container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">Grocious Merchandise</a>
-        </div>
-        <div>
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> Home</a></li>
-                <li><a href="#" data-toggle="modal" data-target="#newProduct"><span class="glyphicon glyphicon-plus"></span> New Product</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="/merchant/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-            </ul>
-            <p class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">{{ merchant }}</a></p>
-        </div>
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Grocious Merchandise</a>
+      </div>
+      <div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+          <li><a href="#" data-toggle="modal" data-target="#newProduct"><span class="glyphicon glyphicon-plus"></span> New Product</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/merchant/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+        </ul>
+        <p class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">{{ merchant }}</a></p>
+      </div>
     </div>
-</nav>
-<div class="container">
+  </nav>
+  <div class="container">
     {% if products %}
-    <table id="products" class="table table-striped table-bordered table-hover">
-        <tr>
-            <th>Name</th>
-            <th>Quantity</th>
-            <th>Unit</th>
-            <th>Price</th>
-            <th>Manufacturer</th>
-            <th>Description</th>
-            <th>URL</th>
-            <th>Stock</th>
-            <th>Availability</th>
-            <th>Action</th>
-        </tr>
-        {% for p in products %}
-        <tr>
-            <td>{{ p.name }}</td>
-            <td>{{ p.quantity }}</td>
-            <td>{{ p.unit }}</td>
-            <td>{{ p.price }}</td>
-            <td>{{ p.manufacturer.manufacturer_name }}</td>
-            <td>{{ p.desc }}</td>
-            <td>{{ p.product_url }}</td>
-            <td>{{ p.stock_units }}</td>
-            <td>{{ p.is_available }}</td>
-            <td>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default" aria-label="Modify">
-                        <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                    </button>
-                    <button type="button" class="btn btn-default" aria-label="Delete">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
+    <table id="products" class="table table-striped table-bordered table-hover table-condensed">
+      <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Unit</th>
+        <th>Price</th>
+        <th>Manufacturer</th>
+        <th>Description</th>
+        <th>URL</th>
+        <th>Stock</th>
+        <th>Availability</th>
+        <th>Category</th>
+        <th>Action</th>
+      </tr>
+      {% for p in products %}
+      <tr class="small">
+        <td><a href="#" class="myeditable editable editable-click name" data-pk="1" data-url="/merchant/update/product/name/{{ p.id }}" data-type="text" data-name="name" data-original-title="Enter product name">{{p.name}}</a></td>
+        <td><a href="#" class="myeditable editable editable-click quantity" data-pk="2" data-url="/merchant/update/product/quantity/{{ p.id }}" data-type="text" data-name="quantity" data-original-title="Enter product quantity">{{p.quantity}}</a></td>
+        <td><a href="#" class="myeditable editable editable-click unit" data-pk="3" data-type="select" data-url="/merchant/update/product/unit/{{ p.id }}" data-value="{{p.unit}}" data-name="unit" data-original-title="Select unit"></a></td>
+        <td><a href="#" class="myeditable editable editable-click price" data-pk="4" data-url="/merchant/update/product/price/{{ p.id }}" data-type="text" data-name="price" data-original-title="Enter product price">{{p.price}}</a></td>
+        <td><a href="#" class="myeditable editable editable-click manufacturer" data-pk="5" data-type="select" data-url="/merchant/update/product/manufacturer/{{ p.id }}" data-value="{{p.manufacturer.id}}" data-name="manufacturer" data-original-title="Select manufacturer"></a></td>
+        <td><a href="#" class="myeditable editable editable-click desc" data-pk="6" data-url="/merchant/update/product/desc/{{ p.id }}" data-type="textarea" data-name="desc" data-original-title="Enter product description">{{p.desc}}</a></td>
+        <td><a href="#" class="myeditable editable editable-click producturl" data-pk="7" data-url="/merchant/update/product/producturl/{{ p.id }}" data-type="text" data-name="producturl" data-original-title="Enter product Url">{{p.product_url}}</a></td>
+        <td><a href="#" class="myeditable editable editable-click stockunits" data-pk="8" data-url="/merchant/update/product/stockunits/{{ p.id }}" data-type="text" data-name="stockunits" data-original-title="Enter product stock units">{{p.stock_units}}</a></td>
+        <td><a href="#" class="myeditable editable editable-click isavailable" data-pk="9" data-type="select" data-url="/merchant/update/product/isavailable/{{ p.id }}" data-value="{{p.is_available}}" data-name="isavailable" data-original-title="Select Availability"></a></td>
+        {% if p.category %}
+        <td><a href="#" class="myeditable editable editable-click category" data-pk="10" data-type="select" data-url="/merchant/update/product/category/{{ p.id }}" data-value="{{p.category.id}}" data-name="category" data-original-title="Select category"></a></td>
+        {% else %}
+        <td><a href="#" class="myeditable editable editable-click category" data-pk="10" data-type="select" data-url="/merchant/update/product/category/{{ p.id }}" data-value="Empty" data-name="category" data-original-title="Select category"></a></td>
+        {% endif %}
+        <td>
+          <div class="btn-group" role="group">
+            <!--button type="button" class="btn btn-default" aria-label="Modify">
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+            </button-->
+            <a href="/merchant/product/delete/{{ p.id }}" class="delete-product">
+              <button type="button" class="btn btn-default" aria-label="Delete">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+              </button>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
     </table>
     {% endif %}
     <footer class="footer">
@@ -73,38 +86,159 @@
       </div>
     </footer>
     <div class="modal fade" id="newProduct" tabindex="-1" role="dialog" aria-labelledby="New Product" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">New Product</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="forms">
-                        <h3>Add Product</h3>
-                        <form action="/merchant/pCreate/" method="POST" class="form-horizontal">{% csrf_token %}
-                            <table class="table">
-                                {{ productForm.as_table }}
-                                <th></th><td><input type="submit" value="Add" class="btn btn-primary"/></td>
-                            </table>
-                        </form>
-                    </div>
-                    <div class="forms">
-                        <h3>Add Manufacturer</h3>
-                        <form action="/merchant/mCreate/" method="POST" class="form-horizontal">{% csrf_token %}
-                            <table class="table">
-                                {{ manufacturerForm.as_table }}
-                                <th></th><td><input type="submit" value="Add" class="btn btn-primary"/></td>
-                            </table>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">New Product</h4>
+          </div>
+          <div class="modal-body">
+            <div class="container forms">
+              <div class="row">
+                <div class="col-md-offset-1 col-md-4">
+                  <div class="forms">
+                    <h3>Add Product</h3>
+                    <form action="/merchant/pCreate/" method="POST" class="form-horizontal">{% csrf_token %}
+                      {{ productForm | as_bootstrap }}
+                      <table class="table">
+                        <th></th><td><input type="submit" value="Add" class="btn btn-primary"/></td>
+                      </table>
+                    </form>
+                  </div>
+                  <div class="forms">
+                    <h3>Add Manufacturer</h3>
+                    <form action="/merchant/mCreate/" method="POST" class="form-horizontal">{% csrf_token %}
+                      {{ manufacturerForm | as_bootstrap }}
+                      <table class="table">
+                        <th></th><td><input type="submit" value="Add" class="btn btn-primary"/></td>
+                      </table>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
-</body>
-</html>
+  </body>
+  <script>
+  $(document).ready(function() {
+
+    $('.isavailable').editable({
+      source: [
+        {value: "True", text: 'True'},
+        {value: "False", text: 'False'}
+      ],
+      placement: "right",
+      success: function(response, newValue) {
+        if(response.status == 'error') return response.msg;
+      },
+      params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+        console.log(data);
+        return data;
+      }
+    });
+
+    var unit = {{unit}};
+    $('.unit').editable({
+      source: unit,
+      placement: "right",
+      success: function(response, newValue) {
+        if(response.status == 'error') return response.msg;
+      },
+      params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+        console.log(data);
+        return data;
+      }
+    });
+
+    var manufacturers = {{manufacturers}};
+    $('.manufacturer').editable({
+      source: manufacturers,
+      placement: "right",
+      success: function(response, newValue) {
+        if(response.status == 'error') return response.msg;
+      },
+      params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+        console.log(data);
+        return data;
+      }
+    });
+
+    var categories = {{categories}};
+    $('.category').editable({
+      source: categories,
+      placement: "left",
+      success: function(response, newValue) {
+        if(response.status == 'error') return response.msg;
+      },
+      params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+        console.log(data);
+        return data;
+      }
+    });
+
+    $('.myeditable').editable({
+      validate: function(value) {
+        if($.trim(value) == '') return 'This field is required';
+      },
+      placement: "right",
+      success: function(response, newValue) {
+        if(response.status == 'error') return response.msg;
+      },
+      params: function(params) {  //params already contain `name`, `value` and `pk`
+        var data = {};
+        data['id'] = params.pk;
+        data[params.name] = params.value;
+        data['csrfmiddlewaretoken'] = $("input[name='csrfmiddlewaretoken']").val()
+        console.log(data);
+        return data;
+      }
+    });
+
+    $(".delete-product").click(function(event){
+      event.preventDefault();
+      var a_ref = $(this);
+      $.ajax({
+        url : a_ref.attr("href"),
+        method: "GET",
+        dataType: "json",
+        success: function(result) {
+          console.log(result);
+          if (result.status == 0) {
+            a_ref.closest("tr").remove();
+          }
+          alert(result.msg);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log("Unknown error happened");
+          console.log(jqXHR);
+          alert("Unknown error occurred, Product not deleted");
+        }
+      });
+    });
+
+
+  });
+  </script>
+  </html>
