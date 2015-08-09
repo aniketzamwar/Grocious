@@ -227,7 +227,9 @@ def checkoutCart(request):
     print products
     if len(products) == 0:
         products = None
-    html = t.render(RequestContext(request, { "products" : products, "totalPrice": totalPrice }))
+    html = t.render(RequestContext(request, { 'uname': request.user.get_full_name(),
+                                              'products' : products,
+                                              'totalPrice': totalPrice }))
     return HttpResponse(html)
 
 @login_required
