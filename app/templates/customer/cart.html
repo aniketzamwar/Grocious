@@ -43,7 +43,7 @@
                             <h5>{{product.quantity}} {{product.unit}} for ${{product.price}}</h5>
                             <a href="/cart/delete/{{product.id}}"><small>delete</small></a>
                         </td>
-                        <td>{{product.count}} {{product.unit}}{{ product.count|pluralize }}</td>
+                        <td>{{product.count}} x {{ product.quantity}} {{product.unit}}{{ product.count|pluralize }}</td>
                         <td>${{product.total}}</td>
                     </tr>
                 {% endfor %}

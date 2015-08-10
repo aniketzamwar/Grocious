@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
   <style>
   .table tbody>tr>td.vert-align {
     vertical-align: middle;
@@ -71,7 +73,7 @@
 
           <td>
             <form action="/cart/update/{{product.id}}" method="GET" class="form-horizontal">{% csrf_token %}
-              <input type="number" name="quantity"  min="1" max="10" value="{{ product.count }}" /> {{product.unit}}{{ product.count|pluralize }}
+              <input type="number" name="quantity"  min="1" max="10" value="{{ product.count }}" /> x {{ product.quantity }} {{product.unit}}{{ product.count|pluralize }}
               <br/><button type="submit" class="btn btn-link"><small>update</small></button>
             </form>
           </td>
@@ -91,6 +93,16 @@
       {% else %}
       <div class="col-md-7 col-md-offset-1"><h3>Nothing in your cart!!</h3></div>
       {% endif %}
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+          </div><!-- /.modal-content -->
+        </div>
+      </div>
     </div>
   </div>
   <footer class="footer">

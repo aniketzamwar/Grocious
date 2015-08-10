@@ -223,7 +223,8 @@ def viewCart(request):
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
             productDict = product.to_mongo()
-            productDict['count'] = cart[key] * product.quantity
+            productDict['quantity'] = product.quantity
+            productDict['count'] = cart[key]
             productDict['total'] = product.price * long(cart[key])
             productDict['id'] = key
             productDict['unit'] = product.get_unit_display()
@@ -252,7 +253,8 @@ def checkoutCart(request):
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
             productDict = product.to_mongo()
-            productDict['count'] = cart[key] * product.quantity
+            productDict['quantity'] = product.quantity
+            productDict['count'] = cart[key]
             productDict['total'] = product.price * long(cart[key])
             productDict['id'] = key
             productDict['unit'] = product.get_unit_display()
