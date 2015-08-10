@@ -161,6 +161,37 @@ def addToCart(request, pId, count):
 
 @login_required
 @require_GET
+def updateCart(request, pId):
+    #if not request.user or not request.user.is_authenticated():
+    #    return HttpResponseRedirect('/index/')
+
+    message = None
+    try:
+        count = request.GET['quantity']
+        data =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
+        if data:
+            message =  data.name + " count updated in cart to " + str(count)
+            cart = request.session.get('cart',{})
+            if pId in cart:
+                if count > 0:
+                    cart[pId] = int(count)
+                elif count == 0:
+                    message = "Product " + data.name + " removed from cart."
+                    del cart[pId]
+            else:
+                message = "No product found in cart to perform update!!"
+            request.session['cart'] = cart
+        else:
+            message = "Sorry!! No such product found to update in your cart!"
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+
+    if message:
+        request.session["message"] = message
+    return HttpResponseRedirect("/cart/checkout")
+
+@login_required
+@require_GET
 def deleteFromCart(request, pId):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
@@ -192,7 +223,7 @@ def viewCart(request):
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
             productDict = product.to_mongo()
-            productDict['count'] = cart[key]
+            productDict['count'] = cart[key] * product.quantity
             productDict['total'] = product.price * long(cart[key])
             productDict['id'] = key
             productDict['unit'] = product.get_unit_display()
@@ -209,6 +240,10 @@ def viewCart(request):
 def checkoutCart(request):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
+    message = None
+    if "message" in request.session:
+        message = request.session["message"]
+        request.session.pop("message")
 
     products = []
     cart = request.session.get('cart',{})
@@ -217,7 +252,7 @@ def checkoutCart(request):
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
             productDict = product.to_mongo()
-            productDict['count'] = cart[key]
+            productDict['count'] = cart[key] * product.quantity
             productDict['total'] = product.price * long(cart[key])
             productDict['id'] = key
             productDict['unit'] = product.get_unit_display()
@@ -229,7 +264,8 @@ def checkoutCart(request):
         products = None
     html = t.render(RequestContext(request, { 'uname': request.user.get_full_name(),
                                               'products' : products,
-                                              'totalPrice': totalPrice }))
+                                              'totalPrice': totalPrice,
+                                              'message' : message }))
     return HttpResponse(html)
 
 @login_required
