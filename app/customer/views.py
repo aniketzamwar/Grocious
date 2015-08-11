@@ -11,7 +11,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 
 from forms import UserProfileForm, AddressForm, LoginForm
-from app.models import UserProfile, Product
+from app.models import UserProfile, Product, Category
 from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_OPTION_CHOICES_AND_CHARGES
 
 CITY_CHOICES_SELECT = []
@@ -94,6 +94,16 @@ def newAccount(request):
             return render(request, 'customer/create.html', { 'loginForm': LoginForm(), 'userForm': userForm, 'addressForm': addressForm, 'messages': ['Error with account create.'] })
     else:
         return render(request, 'customer/create.html', { 'loginForm': LoginForm(), 'userForm': UserProfileForm(), 'addressForm': AddressForm(UserProfile) })
+
+
+@require_GET
+def getCategories(request):
+    data = {};
+    for category in Category.objects:
+        if category.category_name not in data:
+            data[category.category_name] = []
+        data[category.category_name].append({'id': str(category.id), 'name' : category.category_type})
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @require_GET
 def search(request):

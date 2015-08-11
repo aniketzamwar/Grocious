@@ -1,0 +1,8 @@
+.table tbody>tr>td.vert-align {
+  vertical-align: middle;
+}
+.brand-name {
+  margin-left: 2px;
+  padding-left: 2px;
+  border-left: 2px;
+}
