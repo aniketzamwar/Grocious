@@ -3,7 +3,7 @@ var app = angular.module('grociousApp',[
   'grociousApp.grociousControllers'
   ]);
 
-app.config(['$routeProvider','$provide', '$httpProvider',
+app.config(['$routeProvider',
     function($routeProvider) {
         $routeProvider.
             when('/', {
