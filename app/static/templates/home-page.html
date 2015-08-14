@@ -1,5 +1,5 @@
 <!-- Categories-->
-<nav class="navbar navbar-default" ng-controller="CategoryCtrl">
+<nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
@@ -17,13 +17,13 @@
 </nav>
 
 
-<div data-ng-init="store.search(store.default);">
+<div data-ng-init="search(store.default);">
     <div class="row">
       <div class="col-lg-6">
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search for..." ng-model="store.query">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button" ng-model="store.default" ng-click="store.search(store.default);$event.preventDefault();">Go!</button>
+            <button class="btn btn-default" type="button" ng-model="store.default" ng-click="search(store.default);$event.preventDefault();">Go!</button>
           </span>
         </div><!-- /input-group -->
       </div><!-- /.col-lg-6 -->

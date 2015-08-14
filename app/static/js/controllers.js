@@ -19,16 +19,6 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
   }
 });
 
-grociousControllers.controller('CategoryCtrl',function( $http , $scope ) {
-    $http.get( '/getCategories' ).success( function( data ){
-        $scope.categories = data;
-    });
-
-    $scope.filter = function(category_id){
-      console.log(category_id);
-    };
-});
-
 
 grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $scope) {
   var store = this;
@@ -39,9 +29,21 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
   this.notNext = true
   this.notPrev = true
   this.query = "";
-  this.search = function($page) {
+  $scope.categoryId = "global";
 
-    $http.get('/search?query=' + store.query + "&p=" + $page).success(function(data) {
+  $http.get( '/getCategories' ).success( function( data ){
+      $scope.categories = data;
+  });
+
+  $scope.filter = function(category_id){
+    console.log(category_id);
+    $scope.categoryId = category_id;
+    $scope.search(store.default);
+  };
+
+  $scope.search = function($page) {
+    $http.get('/search/' + $scope.categoryId + "/" + $page + "/" + store.query).success(function(data) {
+      //console.log(data.products)
       store.products = angular.fromJson(data.products);
       if (typeof data.next !== 'undefined') {
         store.next = data.next;
@@ -60,7 +62,7 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
 
   $scope.add = function(id, count) {
     //href = href + "/" + count;
-    $http.get('/cart/add/'+id+'/'+count).success(function(data) {
+    $http.get('/cart/add/' + id + '/' + count).success(function(data) {
       alert("Item added to cart");
     });
   };
