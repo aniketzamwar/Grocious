@@ -1,10 +1,32 @@
 var grociousControllers= angular.module('grociousApp.grociousControllers', []);
 
+grociousControllers.controller('CartCtrl', function($http,$scope){
+
+  $scope.getCart = function(){
+    $http.get( '/getCart' ).success( function( data ){
+        $scope.products = data.products;
+        $scope.totalPrice = data.totalPrice;
+    });
+  }
+
+  $scope.getCart();
+
+  $scope.removeItem = function(id){
+    $http.get("/cart/delete/"+id).success(function(){
+      alert("Item Removed");
+      $scope.getCart();
+    });
+  }
+});
+
 grociousControllers.controller('CategoryCtrl',function( $http , $scope ) {
     $http.get( '/getCategories' ).success( function( data ){
-        console.log(data);
         $scope.categories = data;
     });
+
+    $scope.filter = function(category_id){
+      console.log(category_id);
+    };
 });
 
 
@@ -20,7 +42,6 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
   this.search = function($page) {
 
     $http.get('/search?query=' + store.query + "&p=" + $page).success(function(data) {
-      console.log(data)
       store.products = angular.fromJson(data.products);
       if (typeof data.next !== 'undefined') {
         store.next = data.next;

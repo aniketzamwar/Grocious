@@ -195,25 +195,29 @@ def viewCart(request):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
 
-    products = []
+    data = {}
+    data['products'] = []
     cart = request.session.get('cart',{})
     totalPrice = 0
+    print cart
     for key in cart:
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
-            productDict = product.to_mongo()
-            productDict['count'] = cart[key]
-            productDict['total'] = product.price * long(cart[key])
-            productDict['id'] = key
-            productDict['unit'] = product.get_unit_display()
-            totalPrice = totalPrice + productDict['total']
-            products.append(productDict)
-    t = get_template('customer/cart.html')
-    print "View Cart", products
-    if len(products) == 0:
-        products = None
-    html = t.render(RequestContext(request, { "products" : products, "totalPrice": totalPrice }))
-    return HttpResponse(html)
+            subtotal = product.price * long(cart[key]);
+            cartItem = {
+            'name': product.name,
+            'count': cart[key],
+            'total': str(subtotal),
+            'price':str(product.price),
+            'id': str(key),
+            'unit': product.get_unit_display()
+            };
+            print "CartItem", cartItem
+            data['products'].append(cartItem);
+            totalPrice = totalPrice + subtotal
+    data['totalPrice'] = str(totalPrice)
+    print "View Cart", data
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
 def checkoutCart(request):

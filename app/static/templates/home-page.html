@@ -9,7 +9,7 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <li ng-repeat="category in category_detail"><a href="#" data-pid={{category.id}}>{{category.name}}</a></li>
+            <li ng-repeat="category in category_detail"><a href="" ng-click="filter(category.id)">{{category.name}}</a></li>
           </ul>
         </li>
       </ul>
@@ -17,7 +17,7 @@
 </nav>
 
 
-<div class="container container-fluid" data-ng-init="store.search(store.default);">
+<div data-ng-init="store.search(store.default);">
     <div class="row">
       <div class="col-lg-6">
         <div class="input-group">

@@ -29,7 +29,7 @@
           <li class="active"><a href="/main/"><span class="glyphicon glyphicon-home"></span> Home</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="/myCart/" data-toggle="modal" data-target="#modal"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+          <li><a href="#/mycart" ><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
           <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
         </ul>
         <p class="navbar-text navbar-right">Signed in as <a href="/myInfo/" class="navbar-link" data-toggle="modal" data-target="#modal2">{{uname}}</a></p>
@@ -37,7 +37,7 @@
     </div>
   </nav>
 
-  <div id="main-contents" ng-view></div>
+  <div id="main-contents"  class="container container-fluid" ng-view></div>
 
   <div class="container-fluid">
     <div class="row">
