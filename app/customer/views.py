@@ -107,14 +107,13 @@ def getCategories(request):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 @require_GET
-def search(request, cId, p, query):
-    print query, p, cId
+def search(request, cId, page, query):
     if cId == "global":
         cId = None
 
     p = 1
     try:
-        p = int(p)
+        p = int(page)
         if p <= 0:
             p = 1
     except ValueError:
@@ -126,7 +125,7 @@ def search(request, cId, p, query):
     data = {}
     query = query.strip()
     try:
-        product = []
+        products = []
         if query and cId:
             products = Product.objects(category=bson.objectid.ObjectId(cId)).search_text(query).order_by('$text_score').skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')
         elif query:
@@ -135,9 +134,11 @@ def search(request, cId, p, query):
             products = Product.objects(category=bson.objectid.ObjectId(cId)).skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')
         else:
             products = Product.objects.skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')(name__icontains=query)
-        data["products"] = products.to_json()
         if products and len(products) > ITEMS_PER_PAGE:
+            data["products"] = products[0 : ITEMS_PER_PAGE].to_json()
             data['next'] = p + 1
+        else:
+            data["products"] = products.to_json()
         if p > 1:
             data['prev'] = p - 1
     except:
