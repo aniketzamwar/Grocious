@@ -9,6 +9,7 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from app.models import DoesNotExist
 
 from forms import UserProfileForm, AddressForm, LoginForm
 from app.models import UserProfile, Product, Category
@@ -53,15 +54,19 @@ def loginUser(request):
     messages.set_level(request, messages.INFO)
     loginForm = LoginForm(request.POST)
     if loginForm.is_valid():
-        user = UserProfile.objects.get(username=loginForm.cleaned_data['username'])  #authenticate(username=loginForm.cleaned_data['username'], password=loginForm.cleaned_data['password'])
-        if user and user.is_active and user.check_password(request.POST['password']):
-            user.backend = 'mongoengine.django.auth.MongoEngineBackend'
-            login(request, user)
-            request.session.set_expiry(60 * 60 * 1) # 1 hour timeout
-            return HttpResponseRedirect('/main/')
-        else:
-            messages.add_message(request, messages.ERROR, "Username/password not found!!", extra_tags="alert-danger", fail_silently=False)
-            return HttpResponseRedirect('/index/')
+        try:
+            user = UserProfile.objects.get(username=loginForm.cleaned_data['username'])  #authenticate(username=loginForm.cleaned_data['username'], password=loginForm.cleaned_data['password'])
+            if user and user.is_active and user.check_password(request.POST['password']):
+                user.backend = 'mongoengine.django.auth.MongoEngineBackend'
+                login(request, user)
+                request.session.set_expiry(60 * 60 * 1) # 1 hour timeout
+                return HttpResponseRedirect('/main/')
+        except DoesNotExist:
+            print "Unexpected error:", sys.exc_info()[0]
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+        messages.add_message(request, messages.ERROR, "Username/password not found!!", extra_tags="alert-danger", fail_silently=False)
+        return HttpResponseRedirect('/index/')
     else:
         print "Invalid form"
         print loginForm
