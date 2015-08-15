@@ -187,7 +187,8 @@ class Product(Document):
     #product_images =
 
     meta = {'indexes': [
-        {'fields': ['$name', "$desc"],
+        {
+         'fields': ['$name', "$desc"],
          'default_language': 'english',
          'weight': {'name': 10, 'desc': 5}
         }

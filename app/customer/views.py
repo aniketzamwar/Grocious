@@ -248,7 +248,8 @@ def viewCart(request):
             'total': str(subtotal),
             'price':str(product.price),
             'id': str(key),
-            'unit': product.get_unit_display()
+            'unit': product.get_unit_display(),
+            'quantity': str(product.quantity)
             };
             print "CartItem", cartItem
             data['products'].append(cartItem);
