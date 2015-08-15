@@ -9,9 +9,10 @@ from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
+from app.models import DoesNotExist
 
 from forms import UserProfileForm, AddressForm, LoginForm
-from app.models import UserProfile, Product
+from app.models import UserProfile, Product, Category
 from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_OPTION_CHOICES_AND_CHARGES
 
 CITY_CHOICES_SELECT = []
@@ -53,15 +54,19 @@ def loginUser(request):
     messages.set_level(request, messages.INFO)
     loginForm = LoginForm(request.POST)
     if loginForm.is_valid():
-        user = UserProfile.objects.get(username=loginForm.cleaned_data['username'])  #authenticate(username=loginForm.cleaned_data['username'], password=loginForm.cleaned_data['password'])
-        if user and user.is_active and user.check_password(request.POST['password']):
-            user.backend = 'mongoengine.django.auth.MongoEngineBackend'
-            login(request, user)
-            request.session.set_expiry(60 * 60 * 1) # 1 hour timeout
-            return HttpResponseRedirect('/main/')
-        else:
-            messages.add_message(request, messages.ERROR, "Username/password not found!!", extra_tags="alert-danger", fail_silently=False)
-            return HttpResponseRedirect('/index/')
+        try:
+            user = UserProfile.objects.get(username=loginForm.cleaned_data['username'])  #authenticate(username=loginForm.cleaned_data['username'], password=loginForm.cleaned_data['password'])
+            if user and user.is_active and user.check_password(request.POST['password']):
+                user.backend = 'mongoengine.django.auth.MongoEngineBackend'
+                login(request, user)
+                request.session.set_expiry(60 * 60 * 1) # 1 hour timeout
+                return HttpResponseRedirect('/main/')
+        except DoesNotExist:
+            print "Unexpected error:", sys.exc_info()[0]
+        except:
+            print "Unexpected error:", sys.exc_info()[0]
+        messages.add_message(request, messages.ERROR, "Username/password not found!!", extra_tags="alert-danger", fail_silently=False)
+        return HttpResponseRedirect('/index/')
     else:
         print "Invalid form"
         print loginForm
@@ -73,6 +78,7 @@ def logoutUser(request):
         logout(request)
     return HttpResponseRedirect('/index/')
 
+@require_POST
 def newAccount(request):
     if request.user and request.user.is_authenticated():
         return HttpResponseRedirect('/main/')
@@ -95,40 +101,51 @@ def newAccount(request):
     else:
         return render(request, 'customer/create.html', { 'loginForm': LoginForm(), 'userForm': UserProfileForm(), 'addressForm': AddressForm(UserProfile) })
 
+
 @require_GET
-def search(request):
-    query = ""
-    if 'query' in request.GET:
-        query = request.GET['query']
+def getCategories(request):
+    data = {};
+    for category in Category.objects:
+        if category.category_name not in data:
+            data[category.category_name] = []
+        data[category.category_name].append({'id': str(category.id), 'name' : category.category_type})
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@require_GET
+def search(request, cId, page, query):
+    if cId == "global":
+        cId = None
 
     p = 1
-    if 'p' in request.GET:
-        p = request.GET['p']
-        try:
-            p = int(p)
-        except ValueError:
-            print "Unexpected error:", sys.exc_info()[0]
+    try:
+        p = int(page)
+        if p <= 0:
             p = 1
-    if p <= 0:
+    except ValueError:
+        print "Unexpected error:", sys.exc_info()[0]
         p = 1
 
     ITEMS_PER_PAGE = 16
     offset = (p - 1) * ITEMS_PER_PAGE
     data = {}
+    query = query.strip()
     try:
-        product = []
-        if query:
-            products = Product.objects.search_text(query).order_by('$text_score').skip(offset).limit(ITEMS_PER_PAGE).only('name', 'desc', 'quantity', 'unit', 'price', 'id')
+        products = []
+        if query and cId:
+            products = Product.objects(category=bson.objectid.ObjectId(cId)).search_text(query).order_by('$text_score').skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')
+        elif query:
+            products = Product.objects.search_text(query).order_by('$text_score').skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')
+        elif cId:
+            products = Product.objects(category=bson.objectid.ObjectId(cId)).skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')
         else:
-            products = Product.objects.skip(offset).limit(ITEMS_PER_PAGE).only('name', 'desc', 'quantity', 'unit', 'price', 'id')(name__icontains=query)
-        if products:
-            data['products'] = products.to_json()
-            next_offset = p * ITEMS_PER_PAGE
-            is_next = Product.objects.skip(next_offset).limit(1).only('id')(name__icontains=query)
-            if is_next:
-                data['next'] = p + 1
-            if p > 1:
-                data['prev'] = p - 1
+            products = Product.objects.skip(offset).limit(ITEMS_PER_PAGE + 1).only('name', 'desc', 'quantity', 'unit', 'price', 'id')(name__icontains=query)
+        if products and len(products) > ITEMS_PER_PAGE:
+            data["products"] = products[0 : ITEMS_PER_PAGE].to_json()
+            data['next'] = p + 1
+        else:
+            data["products"] = products.to_json()
+        if p > 1:
+            data['prev'] = p - 1
     except:
         print "Unexpected error:", sys.exc_info()[0]
     return HttpResponse(json.dumps(data), content_type="application/json")
@@ -216,26 +233,29 @@ def viewCart(request):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
 
-    products = []
+    data = {}
+    data['products'] = []
     cart = request.session.get('cart',{})
     totalPrice = 0
+    print cart
     for key in cart:
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
-            productDict = product.to_mongo()
-            productDict['quantity'] = product.quantity
-            productDict['count'] = cart[key]
-            productDict['total'] = product.price * long(cart[key])
-            productDict['id'] = key
-            productDict['unit'] = product.get_unit_display()
-            totalPrice = totalPrice + productDict['total']
-            products.append(productDict)
-    t = get_template('customer/cart.html')
-    print "View Cart", products
-    if len(products) == 0:
-        products = None
-    html = t.render(RequestContext(request, { "products" : products, "totalPrice": totalPrice }))
-    return HttpResponse(html)
+            subtotal = product.price * long(cart[key]);
+            cartItem = {
+            'name': product.name,
+            'count': cart[key],
+            'total': str(subtotal),
+            'price':str(product.price),
+            'id': str(key),
+            'unit': product.get_unit_display()
+            };
+            print "CartItem", cartItem
+            data['products'].append(cartItem);
+            totalPrice = totalPrice + subtotal
+    data['totalPrice'] = str(totalPrice)
+    print "View Cart", data
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
 def checkoutCart(request):
