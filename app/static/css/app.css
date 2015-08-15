@@ -1,3 +1,7 @@
+body{
+  font-family: arial, tahoma, verdana, sans-serif;
+}
+
 .table tbody>tr>td.vert-align {
   vertical-align: middle;
 }
@@ -5,4 +9,43 @@
   margin-left: 2px;
   padding-left: 2px;
   border-left: 2px;
+}
+
+/* home page css*/
+.product-column:hover{
+  box-shadow: 0 0 5px rgba(0, 89, 144, 1);
+}
+
+.product-column{
+  width: 20%;
+  margin: 0 50px 20px 0;
+  display: inline-block;
+  vertical-align: top;
+  padding: 7px;
+  border: 1px solid #ddd;
+}
+.product-results{
+  margin: 20px 0 0 0;
+}
+
+/* cart css */
+
+.product-name{
+  color: #265a88;
+  font-weight:bold;
+}
+
+.cart-footer{
+  text-align: right;
+}
+
+.cart-body{
+  border: 1px solid #ddd;
+  margin-bottom: 0!important;
+  font-size: 1em;
+}
+
+.product-price{
+  font-weight: bold;
+  color:maroon;
 }

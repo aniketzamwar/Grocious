@@ -1,36 +1,39 @@
-<div class="col-md-7 col-md-offset-1" ng-if="products.length == 0"><h3>Nothing in your cart!!</h3></div>
-<div class="row" ng-if="products.length > 0">
-  <table class="table table-hover table-condensed">
-      <tr>
-          <th>Product</th>
-          <th>Name</th>
-          <th>Units</th>
-          <th>Price</th>
+<div class="col-md-8" ng-if="products.length == 0"><h3>Your cart is empty !!</h3></div>
+<div class="col-md-8" ng-if="products.length > 0" >
+  <table class="table table-hover table-condensed cart-body">
+      <tr class="well">
+          <td class="col-md-8">PRODUCT</td>
+          <td class="col-md-2">UNITS</td>
+          <td class="col-md-2">SUBTOTAL</td>
       </tr>
       <tr ng-repeat="product in products">
-          <td>
-            <div class="media-left">
+          <td class="col-md-8">
+            <div class="col-md-4">
               <a href="">
                 <img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 64px; height: 64px;">
               </a>
             </div>
+
+            <div class="col-md-8">
+              <p class="product-name">{{product.name}}</p>
+              <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency}}</p>
+              <a href="" ng-click = "removeItem(product.id)"><small>Delete</small></a>
+            </div>
           </td>
-          <td>
-              <h4 class="media-heading">{{product.name}}</h4>
-              <h5>{{product.count}} {{product.unit}} {{product.price}}</h5>
-              <a href="" ng-click = "removeItem(product.id)"><small>delete</small></a>
-          </td>
-          <td>{{product.unit}}</td>
-          <td>{{product.total | currency}}</td>
-      </tr>
-      <tr>
-          <td></td>
-          <td>
-              <h4><b>Total Price</b></h4>
-          </td>
-          <td></td>
-          <input type="hidden" id="cartPrice" value="{{totalPrice}}"/>
-          <td><h4><b><span id="totalPrice">{{totalPrice | currency}}</span></b></h4></td>
+          <td class="col-md-2">{{product.count}} {{product.unit}}</td>
+          <td class="col-md-2 product-price">{{product.total | currency}}</td>
       </tr>
   </table>
+  <div class="col-md-12 well cart-footer">
+    <div>
+      <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{totalPrice | currency}}</span> </h4>
+      <input type="hidden" id="cartPrice" value="{{totalPrice}}"/>
+    </div>
+    <div>
+      <input class="btn btn-success" type="button" value="Clear Cart"/>
+      <input class="btn btn-success" type="button" value="Proceed to Checkout"/>
+    </div>
+  </div>
 </div>
+<div class="col-md-4"> People also bought these with _ _ _ _ _</div>
+<div class="col-md-12">You can bring these with this product </div>
