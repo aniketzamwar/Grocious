@@ -15,6 +15,10 @@ app.config(['$routeProvider',
               templateUrl: '/static/templates/cart-page.html',
               controller: 'CartCtrl',
             }).
+            when('/product/:pId',{
+              templateUrl: '/static/templates/product-page.html',
+              controller: 'ProductCtrl',
+            }).
             otherwise({
                 redirectTo: '/'
             });

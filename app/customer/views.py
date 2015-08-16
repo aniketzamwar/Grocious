@@ -150,6 +150,17 @@ def search(request, cId, page, query):
         print "Unexpected error:", sys.exc_info()[0]
     return HttpResponse(json.dumps(data), content_type="application/json")
 
+@require_GET
+def getProduct(request, pId):
+    data = {}
+    try:
+        product = Product.objects.get(id=bson.objectid.ObjectId(pId))
+        if product:
+            data["product"] = product.to_json()
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
 @login_required
 @require_GET
 def addToCart(request, pId, count):
@@ -178,13 +189,12 @@ def addToCart(request, pId, count):
 
 @login_required
 @require_GET
-def updateCart(request, pId):
+def updateCart(request, pId, count):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
-
+    print pId, count
     message = None
     try:
-        count = request.GET['quantity']
         data =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
         if data:
             message =  data.name + " count updated in cart to " + str(count)

@@ -1,5 +1,12 @@
 var grociousControllers= angular.module('grociousApp.grociousControllers', []);
 
+grociousControllers.controller('ProductCtrl', ['$scope', '$routeParams', '$http',
+  function($scope, $routeParams, $http) {
+    $http.get('/product/' + $routeParams.pId).success(function(data) {
+      $scope.product = angular.fromJson(data.product);
+    });
+}]);
+
 grociousControllers.controller('CartCtrl', function($http,$scope){
 
   $scope.getCart = function(){
@@ -12,11 +19,19 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
   $scope.getCart();
 
   $scope.removeItem = function(id){
-    $http.get("/cart/delete/"+id).success(function(){
+    $http.get("/cart/delete/" + id).success(function(){
       alert("Item Removed");
       $scope.getCart();
     });
   }
+
+  $scope.updateItem = function(id, count){
+    $http.get("/cart/update/"+ id + "/" + count).success(function(){
+      alert("Item Updated");
+      $scope.getCart();
+    });
+  }
+
 });
 
 
@@ -31,7 +46,7 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
   this.query = "";
   $scope.categoryId = "global";
 
-  $http.get( '/getCategories' ).success( function( data ){
+  $http.get( '/getCategories/' ).success( function( data ){
       $scope.categories = data;
   });
 
@@ -66,6 +81,13 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
       alert("Item added to cart");
     });
   };
+
+  // this is not needed
+  $scope.getProduct = function(pId){
+    $http.get( '/product/' + pId ).success( function( data ){
+        $scope.product = data.product;
+    });
+  }
 
   this.getLink = function(id) {
     return "/cart/add/" + id;

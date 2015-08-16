@@ -17,10 +17,14 @@
             <div class="col-md-8">
               <p class="product-name">{{product.name}}</p>
               <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency}}</p>
-              <a href="" ng-click = "removeItem(product.id)"><small>Delete</small></a>
             </div>
           </td>
-          <td class="col-md-2">{{product.count}} {{product.unit}}</td>
+          <td class="col-md-3">
+            <p>
+              <input type="number" min="1" max="10" ng-model="product.count" ng-init="product.count"/> x {{ product.quantity }} {{product.unit}}
+            </p>
+            <a href="" ng-click = "updateItem(product.id, product.count)"><small>Update</small></a> | <a href="" ng-click = "removeItem(product.id)"><small>Delete</small></a>
+          </td>
           <td class="col-md-2 product-price">{{product.total | currency}}</td>
       </tr>
   </table>
