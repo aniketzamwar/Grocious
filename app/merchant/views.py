@@ -42,7 +42,6 @@ def merchantMain(request):
 		if mfs:
 			for m in mfs:
 				manufacturers.append({"value": str(m.id), "text": m.manufacturer_name})
-	print manufacturers
 
 	return render(request, 'merchant/main.html', { 'merchant': request.user.merchant_name, 'productForm' : ProductForm(), 'manufacturerForm' : ManufacturerForm(),
 												   'merchant': request.user.merchant_name, 'products' : products,
@@ -176,6 +175,26 @@ def deleteProduct(request, pid):
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
+def getIcon(request, pId):
+    product = Product.objects.get(id=bson.objectid.ObjectId(pId))
+    if product:
+        print product
+        if product.icon_image:
+            print product.icon_image.content_type
+    return HttpResponse(product.icon_image.read(), content_type=product.icon_image.content_type)
+
+@login_required
+def uploadIcon(request, pId):
+    product = Product.objects.get(id=bson.objectid.ObjectId(pId))
+    imageFile = request.FILES.get("iconImage")
+    try:
+        if product and imageFile:
+            product.icon_image.put(imageFile, content_type = 'image/jpeg')
+            product.save()
+    except:
+        print "Unexpected error:", sys.exc_info()
+
+    return HttpResponseRedirect('/merchant/main/')
 
 @login_required
 def updateProduct(request, field, pid):

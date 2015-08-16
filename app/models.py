@@ -184,6 +184,7 @@ class Product(Document):
     stock_units       = IntField(verbose_name="Please enter number of units of quantity above", help_text="Please enter positive integer.")
     merchant_id       = ReferenceField(Merchant)
     category          = ReferenceField(Category)
+    icon_image        = FileField()
     #product_images =
 
     meta = {'indexes': [

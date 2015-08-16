@@ -30,4 +30,6 @@ urlpatterns = patterns('',
     ('^merchant/viewAll/$', merchant_views.viewProducts),
     ('^merchant/update/product/([\w]+)/([\d\w]+)$', merchant_views.updateProduct),
     ('^merchant/product/delete/([\d\w]+)$', merchant_views.deleteProduct),
+    ('^merchant/upload/product/icon/([\d\w]+)$', merchant_views.uploadIcon),
+    ('^product/icon/([\d\w]+)$', merchant_views.getIcon),
 )
