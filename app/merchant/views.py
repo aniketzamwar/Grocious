@@ -7,6 +7,7 @@ from app.models import Merchant, Address, Product, Manufacturer, Category
 from django.contrib.auth import login, logout
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from app.customer.forms import AddressForm, LoginForm
 from mongoengine.queryset import DoesNotExist
 from app.models import UNIT_CHOICES
@@ -175,13 +176,16 @@ def deleteProduct(request, pid):
 
     return HttpResponse(json.dumps(response), content_type="application/json")
 
+
+DEFAULT_IMAGE_DATA = open(settings.BASE_DIR + "/app/static/localfiles/default.jpg", "rb").read()
 def getIcon(request, pId):
-    product = Product.objects.get(id=bson.objectid.ObjectId(pId))
-    if product:
-        print product
-        if product.icon_image:
-            print product.icon_image.content_type
-    return HttpResponse(product.icon_image.read(), content_type=product.icon_image.content_type)
+    try:
+        product = Product.objects.get(id=bson.objectid.ObjectId(pId))
+        if product and product.icon_image:
+            return HttpResponse(product.icon_image.read(), content_type=product.icon_image.content_type)
+    except:
+        print "Unexpected error:", sys.exc_info()
+    return HttpResponse(DEFAULT_IMAGE_DATA, mimetype="image/jpeg")
 
 @login_required
 def uploadIcon(request, pId):
