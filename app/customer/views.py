@@ -326,10 +326,7 @@ def updateUser(request, field):
             if user:
                 print field, value
                 flag = False
-                if field == "username":
-                    user.update(set__username=str(value))
-                    flag = True
-                elif field == "fname":
+                if field == "fname":
                     user.update(set__first_name=str(value))
                     flag = True
                 elif field == "lname":

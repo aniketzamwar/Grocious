@@ -1,5 +1,7 @@
 <script>
 $(document).ready(function() {
+    $.fn.editable.defaults.mode = 'inline';
+
     $('#gender').editable({
         source: [
             {value: "ML", text: 'Male'},
@@ -86,22 +88,20 @@ $(document).ready(function() {
 </script>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title" id="myModalLabel">My Info</h4>
+    <h4 class="modal-title" id="myModalLabel">Use and Address info</h4>
 </div>
 <div class="modal-body">
     <div class="row">
-        <div class="col-md-8"> {% csrf_token %}
-            <table class="table">
+        <div class="col-md-10"> {% csrf_token %}
+            <table id="user" class="table table-bordered table-striped">
                 <tr>
-                    <th>Username</th>
-                    <!--td>{{user.username}}</td-->
-                    <td>
-                        <a href="#" class="myeditable editable editable-click" id="username" data-pk="1" data-url="/user/update/username" data-type="text" data-name="username" data-original-title="Enter username">{{user.username}}</a>
+                    <th width="30%">Username</th>
+                    <td width="70%">
+                        <b>{{user.username}}</b>
                     </td>
                 </tr>
                 <tr>
                     <th>First Name</th>
-                    <!--td>{{user.first_name}}</td-->
                     <td>
                         <a href="#" class="myeditable editable editable-click" id="fname" data-pk="2" data-type="text" data-url="/user/update/fname" data-name="fname" data-original-title="Enter First Name">{{user.first_name}}</a>
                     </td>
@@ -131,11 +131,10 @@ $(document).ready(function() {
                     </td>
                 </tr>
             </table>
-            <h4>Address Info</h4>
-            <table class="table">
+            <table id="user" class="table table-bordered table-striped">
                 <tr>
-                    <th>Line 1</th>
-                    <td>
+                    <th width="30%">Address Line 1</th>
+                    <td width="70%">
                         <a href="#" class="myeditable editable editable-click" id="addressLine1" data-type="text" data-name="addressLine1" data-original-title="Enter Address Line 1">{{user.address.line1}}</a>
                     </td>
                 </tr>
