@@ -11,18 +11,103 @@ body{
   border-left: 2px;
 }
 
-/* home page css*/
+/* error class */
+
+input.ng-invalid {
+  border: 1px solid red;
+}
+
+.error{
+  color: red;
+}
+
+
+/* homepage - categories css */
+
+.caret-right {
+  border-bottom: 4px solid transparent;
+  border-top: 4px solid transparent;
+  border-left: 4px solid;
+  display: inline-block;
+  height: 0;
+  width: 0;
+  color: white;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+/* We remove the margin, padding, and list style of UL and LI components */
+#category-wrapper ul, #category-wrapper ul li{
+    margin:0;
+    padding:0;
+    list-style:none;
+}
+
+/* We apply background color and border bottom white and width to 150px */
+#category-wrapper ul li{
+    background-color:#245580;
+    border-bottom:solid 1px white;
+    width:160px;
+    cursor:pointer;
+}
+
+/* We apply the background hover color when user hover the mouse over of the li component */
+#category-wrapper ul li:hover{
+    background-color: #337ab7;
+    position:relative;
+}
+
+/* We apply the link style */
+#category-wrapper ul li a{
+    padding:5px 15px;
+    color:#ffffff;
+    display:inline-block;
+    text-decoration:none;
+}
+
+/**** SECOND LEVEL MENU ****/
+/* We make the position to absolute for flyout menu and hidden the ul until the user hover the parent li item */
+#category-wrapper ul li ul{
+    position:absolute;
+    display:none;
+    z-index:1;
+}
+
+/* When user has hovered the li item, we show the ul list by applying display:block, note: 150px is the individual menu width.  */
+#category-wrapper ul li:hover ul{
+    left:160px;
+    top:0px;
+    display:block;
+}
+
+/* we apply different background color to 2nd level menu items*/
+#category-wrapper ul li ul li{
+    background-color:#337ab7;
+}
+
+/* We change the background color for the level 2 submenu when hovering the menu */
+#category-wrapper ul li:hover ul li:hover{
+    background-color:#245580;
+}
+
+/* We style the color of level 2 links */
+#category-wrapper ul li ul li a{
+    color:#ffffff;
+    display:inline-block;
+    width:120px;
+}
+
+/* homepage - poducts css*/
 .product-column:hover{
   box-shadow: 0 0 5px rgba(0, 89, 144, 1);
 }
 
 .product-column{
   width: 20%;
-  margin: 0 50px 20px 0;
+  margin: 0 0 20px 0;
   display: inline-block;
   vertical-align: top;
   padding: 7px;
-  border: 1px solid #ddd;
 }
 .product-results{
   margin: 20px 0 0 0;

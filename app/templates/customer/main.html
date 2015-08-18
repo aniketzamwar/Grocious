@@ -5,17 +5,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+  <link rel="icon" href="{% static 'carrito-best-md.png' %}">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="{% static 'lib/angular.js' %}"></script>
   <script type="text/javascript" src="{% static 'lib/angular-route.js'%}"></script>
-  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.1/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 
   <script type ="text/javascript" src="{% static 'js/app.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/controllers.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/filters.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
-<body role="document" ng-app="grociousApp">
+<body role="document" ng-app="grociousApp" ng-controller="HeaderCtrl">
   <nav class="navbar navbar-inverse">
     <div class="container container-fluid">
       <div class="navbar-header">
@@ -29,8 +31,19 @@
           <li class="active"><a href="#/main"><span class="glyphicon glyphicon-home"></span> Home</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#/mycart" ><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
-          <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          <li>
+            <a href="#/mycart" >
+              <span class="glyphicon glyphicon-shopping-cart"></span> Cart
+              {% verbatim %}
+                <span class="badge">{{cartCount}}</span>
+              {% endverbatim %}
+            </a>
+          </li>
+          <li>
+            <a href="/logout/">
+              <span class="glyphicon glyphicon-log-out"></span> Logout
+            </a>
+          </li>
         </ul>
         <p class="navbar-text navbar-right">Signed in as <a href="/myInfo/" class="navbar-link" data-toggle="modal" data-target="#modal2">{{uname}}</a></p>
       </div>
@@ -44,13 +57,13 @@
       <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
-          </div><!-- /.modal-content -->
+          </div>
         </div>
       </div>
       <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
-          </div><!-- /.modal-content -->
+          </div>
         </div>
       </div>
     </div>

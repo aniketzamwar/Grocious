@@ -1,11 +1,15 @@
 var grociousControllers= angular.module('grociousApp.grociousControllers', []);
 
-grociousControllers.controller('ProductCtrl', ['$scope', '$routeParams', '$http',
-  function($scope, $routeParams, $http) {
+
+grociousControllers.controller('ProductCtrl', function($scope, $routeParams, $http) {
     $http.get('/product/' + $routeParams.pId).success(function(data) {
       $scope.product = angular.fromJson(data.product);
     });
-}]);
+});
+
+grociousControllers.controller('HeaderCtrl', function($scope){
+  $scope.$root.cartCount = 0;
+});
 
 grociousControllers.controller('CartCtrl', function($http,$scope){
 
@@ -18,10 +22,11 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
 
   $scope.getCart();
 
-  $scope.removeItem = function(id){
+  $scope.removeItem = function(id, count){
     $http.get("/cart/delete/" + id).success(function(){
       alert("Item Removed");
       $scope.getCart();
+      /* $scope.$root.cartCount = data.cartCount */
     });
   }
 
@@ -29,6 +34,7 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
     $http.get("/cart/update/"+ id + "/" + count).success(function(){
       alert("Item Updated");
       $scope.getCart();
+      /* $scope.$root.cartCount = data.cartCount */
     });
   }
 
@@ -76,20 +82,9 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
   };
 
   $scope.add = function(id, count) {
-    //href = href + "/" + count;
     $http.get('/cart/add/' + id + '/' + count).success(function(data) {
       alert("Item added to cart");
+      $scope.$root.cartCount = $scope.$root.cartCount + count
     });
-  };
-
-  // this is not needed
-  $scope.getProduct = function(pId){
-    $http.get( '/product/' + pId ).success( function( data ){
-        $scope.product = data.product;
-    });
-  }
-
-  this.getLink = function(id) {
-    return "/cart/add/" + id;
   };
 });

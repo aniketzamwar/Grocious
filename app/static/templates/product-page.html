@@ -1,1 +1,29 @@
-TBD: detail view for <span>{{product.name}}</span>
+<div class="product-detail col-md-12">
+  <div class="product-image col-md-3">
+    <img class="media-object" data-src="/holder.js/200x200" alt="200x200" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+PGRlZnMvPjxyZWN0IHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgZmlsbD0iI0VFRUVFRSIvPjxnPjx0ZXh0IHg9IjEzLjQ2MDkzNzUiIHk9IjMyIiBzdHlsZT0iZmlsbDojQUFBQUFBO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1mYW1pbHk6QXJpYWwsIEhlbHZldGljYSwgT3BlbiBTYW5zLCBzYW5zLXNlcmlmLCBtb25vc3BhY2U7Zm9udC1zaXplOjEwcHQ7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NjR4NjQ8L3RleHQ+PC9nPjwvc3ZnPg==" data-holder-rendered="true" style="width: 200px; height: 200px;">
+  </div>
+
+  <div class="product-details col-md-6" ng-form name="productCartForm">
+    <h4>{{product.name}}</h4>
+    <p>{{product.desc}}</p>
+    <h4 class="product-price">{{product.price | currency: "&#8377;"}}</h4>
+    <p><input type="number" name="quantity" required min="1" max="10" step="none" ng-model="count" ng-init="count=1"/>
+    <input ng-disabled ="productCartForm.quantity.$invalid" class="btn btn-success" type="button" value="Add To Cart"/></p>
+
+    <div class="error-container" ng-show="productCartForm.quantity.$invalid">
+      <small class="error" ng-show="productCartForm.quantity.$error.required || productCartForm.quantity.$invalid">
+        Please enter a valid quantity.
+      </small>
+      <small class="error" ng-show="productCartForm.quantity.$error.min">
+        Value should be greater than or equal to 1.
+      </small>
+      <small class="error" ng-show="productCartForm.quantity.$error.max">
+        Value should be less than or equal to 10.
+      </small>
+  </div>
+  </div>
+
+  <div class="col-md-3">
+    Some other feature
+  </div>
+</div>

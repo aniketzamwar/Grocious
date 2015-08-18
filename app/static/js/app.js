@@ -1,6 +1,7 @@
 var app = angular.module('grociousApp',[
   'ngRoute',
-  'grociousApp.grociousControllers'
+  'grociousApp.grociousControllers',
+  'grociousApp.grociousFilters'
   ]);
 
 app.config(['$routeProvider',

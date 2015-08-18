@@ -16,22 +16,26 @@
 
             <div class="col-md-8">
               <p class="product-name">{{product.name}}</p>
-              <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency}}</p>
+              <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency : "&#8377;"}}</p>
             </div>
           </td>
           <td class="col-md-3">
-            <p>
-              <input type="number" min="1" max="10" ng-model="product.count" ng-init="product.count"/> x {{ product.quantity }} {{product.unit}}
+            <p ng-form name="cartForm">
+              <input type="number" name="quantity" required min="1" max="10" ng-model="product.count" ng-init="product.count"/> x {{ product.quantity }} {{product.unit}}
             </p>
-            <a href="" ng-click = "updateItem(product.id, product.count)"><small>Update</small></a> | <a href="" ng-click = "removeItem(product.id)"><small>Delete</small></a>
+            <a href="" ng-click = "removeItem(product.id, product.count)">
+              <small>Delete</small>
+            </a> |
+            <a href="" ng-hide="cartForm.quantity.$invalid" ng-click = "updateItem(product.id, product.count)">
+              <small>Update</small>
+            </a>
           </td>
-          <td class="col-md-2 product-price">{{product.total | currency}}</td>
+          <td class="col-md-2 product-price">{{product.price * product.count | currency : "&#8377;"}}</td>
       </tr>
   </table>
   <div class="col-md-12 well cart-footer">
     <div>
-      <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{totalPrice | currency}}</span> </h4>
-      <input type="hidden" id="cartPrice" value="{{totalPrice}}"/>
+      <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{products | getTotalPrice | currency : "&#8377;"}}</span> </h4>
     </div>
     <div>
       <input class="btn btn-success" type="button" value="Clear Cart"/>
