@@ -84,7 +84,7 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
   $scope.add = function(id, count) {
     $http.get('/cart/add/' + id + '/' + count).success(function(data) {
       alert("Item added to cart");
-      $scope.$root.cartCount = $scope.$root.cartCount + count
+      /* $scope.$root.cartCount = data.cartCount */
     });
   };
 });
