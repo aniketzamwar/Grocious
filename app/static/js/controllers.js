@@ -16,25 +16,24 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
   $scope.getCart = function(){
     $http.get( '/getCart' ).success( function( data ){
         $scope.products = data.products;
-        $scope.totalPrice = data.totalPrice;
     });
   }
 
   $scope.getCart();
 
   $scope.removeItem = function(id, count){
-    $http.get("/cart/delete/" + id).success(function(){
+    $http.get("/cart/delete/" + id).success(function( data ){
       alert("Item Removed");
       $scope.getCart();
-      /* $scope.$root.cartCount = data.cartCount */
+      $scope.$root.cartCount = data.cartCount;
     });
   }
 
   $scope.updateItem = function(id, count){
-    $http.get("/cart/update/"+ id + "/" + count).success(function(){
+    $http.get("/cart/update/"+ id + "/" + count).success(function( data ){
       alert("Item Updated");
       $scope.getCart();
-      /* $scope.$root.cartCount = data.cartCount */
+      $scope.$root.cartCount = data.cartCount;
     });
   }
 
@@ -84,7 +83,7 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
   $scope.add = function(id, count) {
     $http.get('/cart/add/' + id + '/' + count).success(function(data) {
       alert("Item added to cart");
-      /* $scope.$root.cartCount = data.cartCount */
+      $scope.$root.cartCount = data.cartCount;
     });
   };
 });

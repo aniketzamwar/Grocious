@@ -3,8 +3,8 @@ var grociousFilters= angular.module('grociousApp.grociousFilters', []);
 grociousFilters.filter('getTotalPrice', function() {
     return function(items) {
         var total = 0, i = 0;
-        for (i = 0; i < items.length; i++) {
-            total += items[i].price * items[i].count;
+        for (key in items) {
+            total += items[key].price * items[key].count;
         }
         return total;
     }

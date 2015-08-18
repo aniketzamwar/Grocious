@@ -185,7 +185,7 @@ def getIcon(request, pId):
             return HttpResponse(product.icon_image.read(), content_type=product.icon_image.content_type)
     except:
         print "Unexpected error:", sys.exc_info()
-    return HttpResponse(DEFAULT_IMAGE_DATA, mimetype="image/jpeg")
+    return HttpResponse(DEFAULT_IMAGE_DATA, content_type="image/jpeg")
 
 @login_required
 def uploadIcon(request, pId):

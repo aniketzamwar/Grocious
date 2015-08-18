@@ -1,12 +1,12 @@
-<div class="col-md-8" ng-if="products.length == 0"><h3>Your cart is empty !!</h3></div>
-<div class="col-md-8" ng-if="products.length > 0" >
+<div class="col-md-8" ng-if="!products"><h3>Your cart is empty !!</h3></div>
+<div class="col-md-8" ng-if="products" >
   <table class="table table-hover table-condensed cart-body">
       <tr class="well">
           <td class="col-md-8">PRODUCT</td>
           <td class="col-md-2">UNITS</td>
           <td class="col-md-2">SUBTOTAL</td>
       </tr>
-      <tr ng-repeat="product in products">
+      <tr ng-repeat="(productId, product) in products">
           <td class="col-md-8">
             <div class="col-md-4">
               <a href="">
@@ -15,7 +15,7 @@
             </div>
 
             <div class="col-md-8">
-              <p class="product-name">{{product.name}}</p>
+              <p class="product-name"><a href="#/product/{{productId}}">{{product.name}}</a></p>
               <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency : "&#8377;"}}</p>
             </div>
           </td>
@@ -23,10 +23,10 @@
             <p ng-form name="cartForm">
               <input type="number" name="quantity" required min="1" max="10" ng-model="product.count" ng-init="product.count"/> x {{ product.quantity }} {{product.unit}}
             </p>
-            <a href="" ng-click = "removeItem(product.id, product.count)">
+            <a href="" ng-click = "removeItem(productId, product.count)">
               <small>Delete</small>
             </a> |
-            <a href="" ng-hide="cartForm.quantity.$invalid" ng-click = "updateItem(product.id, product.count)">
+            <a href="" ng-hide="cartForm.quantity.$invalid" ng-click = "updateItem(productId, product.count)">
               <small>Update</small>
             </a>
           </td>

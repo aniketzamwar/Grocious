@@ -125,7 +125,7 @@ def search(request, cId, page, query):
         print "Unexpected error:", sys.exc_info()[0]
         p = 1
 
-    ITEMS_PER_PAGE = 16
+    ITEMS_PER_PAGE = 15
     offset = (p - 1) * ITEMS_PER_PAGE
     data = {}
     query = query.strip()
@@ -164,108 +164,125 @@ def getProduct(request, pId):
 @login_required
 @require_GET
 def addToCart(request, pId, count):
-    #if not request.user or not request.user.is_authenticated():
-    #    return HttpResponseRedirect('/index/')
-
+    data = {}
     message = None
+    cartCount = request.session.get('cartCount', 0)
+    status = 0
     try:
-        data =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
-        if data:
-            message = "Great Going! " + data.name + " " + str(count) + " " + data.get_unit_display() + " added to your cart."
-            print message
-            cart = request.session.get('cart',{})
+        product =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
+        if product:
+            message = "Great Going! " + product.name + " " + str(count) + " " + product.get_unit_display() + " added to your cart."
+            cart = request.session.get('cart', {})
             if pId in cart:
                 cart[pId] = int(cart[pId]) + int(count)
             else:
                 cart[pId] = int(count)
+            cartCount = int(cartCount) + int(count)
+            request.session['cartCount'] = cartCount
             request.session['cart'] = cart
         else:
-            message = "Sorry!! No such product found to add to cart!"
+            status = -1
+            message = "Sorry!! No such product found to add to cart."
     except:
         print "Unexpected error:", sys.exc_info()[0]
-    if message:
-        request.session["message"] = message
-    return HttpResponseRedirect("/main/")
+        status = -1
+        message = "Unexpected error occurred while adding the product to cart."
+
+    data["status"] = status
+    data["message"] = message
+    data["cartCount"] = cartCount
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
 @require_GET
 def updateCart(request, pId, count):
-    #if not request.user or not request.user.is_authenticated():
-    #    return HttpResponseRedirect('/index/')
-    print pId, count
+    data = {}
     message = None
+    cartCount = request.session.get('cartCount', 0)
+    status = 0
     try:
-        data =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
-        if data:
-            message =  data.name + " count updated in cart to " + str(count)
+        product =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
+        if product:
+            message =  product.name + " count updated in cart to " + str(count)
             cart = request.session.get('cart',{})
             if pId in cart:
+                prevCount = int(cart[pId])
+                difference = int(count) - prevCount
+                cartCount = cartCount + difference
+                request.session['cartCount'] = cartCount
                 if count > 0:
                     cart[pId] = int(count)
                 elif count == 0:
-                    message = "Product " + data.name + " removed from cart."
+                    message = "Product " + product.name + " removed from cart."
                     del cart[pId]
+                request.session['cart'] = cart
             else:
-                message = "No product found in cart to perform update!!"
-            request.session['cart'] = cart
+                status = -1
+                message = "No product found in cart to perform count update."
         else:
+            status = -1
             message = "Sorry!! No such product found to update in your cart!"
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print "Unexpected error:", sys.exc_info()
+        status = -1
+        message = "Unexpected error occurred while updating the cart."
 
-    if message:
-        request.session["message"] = message
-    return HttpResponseRedirect("/cart/checkout")
+    data["status"] = status
+    data["message"] = message
+    data["cartCount"] = cartCount
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
 @require_GET
 def deleteFromCart(request, pId):
-    #if not request.user or not request.user.is_authenticated():
-    #    return HttpResponseRedirect('/index/')
+    data = {}
     message = None
+    cartCount = request.session.get('cartCount', 0)
+    status = 0
     cart = request.session.get('cart',{})
     if pId in cart:
         count = cart.pop(pId)
+        cartCount = cartCount - count
         request.session['cart'] = cart
+        request.session['cartCount'] = cartCount
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(pId))
         if product:
             message = product.name + " " + str(count)  + " " + product.get_unit_display()  + ("s" if (count > 1) else "") + " deleted from your cart!!"
         else:
-            message = "Invalid product!!"
+            message = "Product removed from cart, but no such product found in inventory."
     else:
+        status = -1
         message = "Sorry!! No such product found that was added to cart!"
-    if message:
-        request.session["message"] = message
-    return HttpResponseRedirect("/main/")
+
+    data["status"] = status
+    data["message"] = message
+    data["cartCount"] = cartCount
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
 def viewCart(request):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
 
-    data = {}
-    data['products'] = []
+    data = {
+        "status" : 0
+    };
     cart = request.session.get('cart',{})
-    totalPrice = 0
-    print cart
-    for key in cart:
+    for key in cart.keys():
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
-            subtotal = product.price * long(cart[key]);
             cartItem = {
-            'name': product.name,
-            'count': cart[key],
-            'total': str(subtotal),
-            'price':str(product.price),
-            'id': str(key),
-            'unit': product.get_unit_display(),
-            'quantity': str(product.quantity)
+                'name': product.name,
+                'count': cart[key],
+                'price':str(product.price),
+                'unit': product.get_unit_display(),
+                'quantity': str(product.quantity)
             };
-            print "CartItem", cartItem
-            data['products'].append(cartItem);
-            totalPrice = totalPrice + subtotal
-    data['totalPrice'] = str(totalPrice)
-    print "View Cart", data
+            if "products" not in data:
+                data["products"] = {}
+            data["products"][key] = cartItem
+        else:
+            del cart[key]
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
