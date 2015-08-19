@@ -39,13 +39,20 @@
               {% endverbatim %}
             </a>
           </li>
-          <li>
-            <a href="/logout/">
-              <span class="glyphicon glyphicon-log-out"></span> Logout
+          <li id="header-dropdown">
+            <a href="/myInfo/" class="navbar-link" data-toggle="modal" data-target="#modal2">
+              <span class="glyphicon glyphicon-cog"></span>
+              {{uname}}
             </a>
+            <ul>
+              <li><a href="/myInfo/"><span class="glyphicon glyphicon-user"></span>&nbsp;Account</a></li>
+              <li class="divider"></li>
+              <li><a href="aa"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Orders</a></li>
+              <li class="divider"></li>
+              <li><a href="/logout/"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout</a></li>
+            </ul>
           </li>
         </ul>
-        <p class="navbar-text navbar-right">Signed in as <a href="/myInfo/" class="navbar-link" data-toggle="modal" data-target="#modal2">{{uname}}</a></p>
       </div>
     </div>
   </nav>

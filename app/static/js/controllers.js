@@ -5,6 +5,13 @@ grociousControllers.controller('ProductCtrl', function($scope, $routeParams, $ht
     $http.get('/product/' + $routeParams.pId).success(function(data) {
       $scope.product = angular.fromJson(data.product);
     });
+
+    $scope.add = function(id, count) {
+      $http.get('/cart/add/' + id + '/' + count).success(function(data) {
+        alert("Item added to cart");
+        $scope.$root.cartCount = data.cartCount;
+      });
+    };
 });
 
 grociousControllers.controller('HeaderCtrl', function($scope){
@@ -24,7 +31,10 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
   $scope.removeItem = function(id, count){
     $http.get("/cart/delete/" + id).success(function( data ){
       alert("Item Removed");
-      $scope.getCart();
+      delete $scope.products[id];
+      if($.isEmptyObject($scope.products)){
+        $scope.products = null;
+      }
       $scope.$root.cartCount = data.cartCount;
     });
   }
@@ -32,8 +42,8 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
   $scope.updateItem = function(id, count){
     $http.get("/cart/update/"+ id + "/" + count).success(function( data ){
       alert("Item Updated");
-      $scope.getCart();
       $scope.$root.cartCount = data.cartCount;
+      $scope.products[id].count = count;
     });
   }
 
