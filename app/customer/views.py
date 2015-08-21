@@ -320,9 +320,6 @@ def checkoutCart(request):
 
 @login_required
 def myInfo(request):
-    #if not request.user or not request.user.is_authenticated:
-    #    return HttpResponseRedirect('/index/')
-
     user = UserProfile.objects.get(id=bson.objectid.ObjectId(request.user.id))
     if not user:
         return HttpResponseRedirect('/index/')

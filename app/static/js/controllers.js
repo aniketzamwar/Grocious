@@ -8,8 +8,8 @@ grociousControllers.controller('ProductCtrl', function($scope, $routeParams, $ht
 
     $scope.add = function(id, count) {
       $http.get('/cart/add/' + id + '/' + count).success(function(data) {
-        alert("Item added to cart");
         $scope.$root.cartCount = data.cartCount;
+        $.toaster({ priority : 'success', message : data.message });
       });
     };
 });
@@ -30,20 +30,20 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
 
   $scope.removeItem = function(id, count){
     $http.get("/cart/delete/" + id).success(function( data ){
-      alert("Item Removed");
       delete $scope.products[id];
       if($.isEmptyObject($scope.products)){
         $scope.products = null;
       }
       $scope.$root.cartCount = data.cartCount;
+      $.toaster({ priority : 'warning', message : data.message });
     });
   }
 
   $scope.updateItem = function(id, count){
     $http.get("/cart/update/"+ id + "/" + count).success(function( data ){
-      alert("Item Updated");
       $scope.$root.cartCount = data.cartCount;
       $scope.products[id].count = count;
+      $.toaster({ priority : 'info', message : data.message });
     });
   }
 
@@ -92,8 +92,8 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
 
   $scope.add = function(id, count) {
     $http.get('/cart/add/' + id + '/' + count).success(function(data) {
-      alert("Item added to cart");
       $scope.$root.cartCount = data.cartCount;
+      $.toaster({ priority : 'success', message : data.message });
     });
   };
 });
