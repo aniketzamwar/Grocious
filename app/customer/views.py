@@ -171,7 +171,7 @@ def addToCart(request, pId, count):
     try:
         product =  Product.objects.only('name', 'unit').get(id=bson.objectid.ObjectId(pId))
         if product:
-            message = "Great Going! " + product.name + " " + str(count) + " " + product.get_unit_display() + " added to your cart."
+            message = product.name + " " + str(count) + " " + product.get_unit_display() + " added to your cart."
             cart = request.session.get('cart', {})
             if pId in cart:
                 newCount = int(cart[pId]) + int(count)
