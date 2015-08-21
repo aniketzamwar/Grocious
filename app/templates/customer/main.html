@@ -81,14 +81,14 @@
       <p class="text-muted" style="text-align:center">Copyright Grocious</p>
     </div>
   </footer>
-  <div id="toaster" class="toaster" style="position: fixed; bottom: 10px; left: 10px; width: 400px; z-index: 50000;"></div>
+  <small><div id="toaster" class="toaster" style="position: fixed; bottom: 10px; left: 10px; width: 400px; z-index: 50000;"></div></small>
   <script type="text/javascript">
   $(document).ready(function(){
     $('body').on('hidden.bs.modal', '.modal', function () {
       $(this).removeData('bs.modal');
     });
 
-    $.toaster({ settings : { "timeout" : 3000 } });
+    $.toaster({ settings : { "timeout" : 3500 } });
   });
   </script>
 </body>

@@ -174,10 +174,15 @@ def addToCart(request, pId, count):
             message = "Great Going! " + product.name + " " + str(count) + " " + product.get_unit_display() + " added to your cart."
             cart = request.session.get('cart', {})
             if pId in cart:
-                cart[pId] = int(cart[pId]) + int(count)
+                newCount = int(cart[pId]) + int(count)
+                if (newCount > 10):
+                    message = "You already have %d %s in cart, you can add only %d more of these products to cart." %(int(cart[pId]), product.name, 10 - int(cart[pId]))
+                else:
+                    cart[pId] = newCount
+                    cartCount = newCount
             else:
                 cart[pId] = int(count)
-            cartCount = int(cartCount) + int(count)
+                cartCount = int(count)
             request.session['cartCount'] = cartCount
             request.session['cart'] = cart
         else:
