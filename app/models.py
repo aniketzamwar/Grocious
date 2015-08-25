@@ -185,7 +185,6 @@ class Product(Document):
     merchant_id       = ReferenceField(Merchant)
     category          = ReferenceField(Category)
     icon_image        = FileField()
-    #product_images =
 
     meta = {'indexes': [
         {
@@ -196,13 +195,6 @@ class Product(Document):
     ]}
 
 ###############################################################################################################
-class CartItem(EmbeddedDocument):
-    """
-    """
-    per_unit_price = DecimalField(required=True)
-    total_quantity = DecimalField(required=True)
-    item_id        = ObjectIdField(Product)
-
 DELIVERY_OPTION_CHOICES = (
   ('SP', 'Self Pickup'),
   ('SS', 'Standard shipping'),
@@ -214,7 +206,7 @@ DELIVERY_CHARGES = {
     'SP' : 0.0,
     'SS' : 12.50,
     'OS' : 27.56,
-    'TS' : 21.50,
+    'TS' : 0.0,
 }
 
 DELIVERY_OPTION_CHOICES_AND_CHARGES = list()
@@ -224,20 +216,36 @@ for option in DELIVERY_OPTION_CHOICES:
 
 
 class Delivery(EmbeddedDocument):
-    delivery_type = StringField(max_length=2, choices=DELIVERY_OPTION_CHOICES)
-    delivery_price = DecimalField()
+    delivery_type          = StringField(max_length=2, choices=DELIVERY_OPTION_CHOICES)
+    delivery_price         = DecimalField()
+    delivery_for_person    = StringField()
+    delivery_address       = EmbeddedDocumentField(Address)
     expected_delivery_date = DateTimeField()
 
 PAYMENT_OPTIONS_CHOICES = (
-    ('CD', 'Cash on delivery'),
+    (1, 'Cash on delivery'),
+    (2, 'Credit Card'),
+    (3, 'Debit Card'),
 )
 
+class Card(EmbeddedDocument):
+    card_type             = StringField()    # Visa, Master Card, etc...
+    card_last_four_digits = StringField()
+    card_transaction_info = DictField()
+
 class Payment(EmbeddedDocument):
-    payment_time = StringField(max_length=2, choices=PAYMENT_OPTIONS_CHOICES)
-    payment_amount = DecimalField()
+    payment_type     = StringField(max_length=2, choices=PAYMENT_OPTIONS_CHOICES)
+    payment_amount   = DecimalField()
+    payment_trans_id = StringField()
+    card_info        = EmbeddedDocumentField(Card)
 
 ###############################################################################################################
+class CartItem(EmbeddedDocument):
+    item_unit_price = DecimalField(required=True) # we store the price here, if the price changes after order
+    item_count      = DecimalField(required=True)
+    item_id         = ObjectIdField(Product)
 
+###############################################################################################################
 ORDER_STATUS_OPTIONS = (
     ('OP', 'Order Placed'),
     ('OR', 'Order Received'),
@@ -251,14 +259,21 @@ ORDER_STATUS_OPTIONS = (
 class Order(Document):
     customer_id         = ObjectIdField(UserProfile)
     ordered_items       = ListField(EmbeddedDocumentField(CartItem))
-    date_of_order       = DateTimeField()
-    total_amount        = DecimalField()
-    cart_amount         = DecimalField()
+    order_date          = DateTimeField()
+    order_total_amount  = DecimalField()   # total includes shipping, tax and discounts if any
+    order_cart_amount   = DecimalField()   # cart amount
+    order_status        = StringField(min_length=2, max_length=3, choices=ORDER_STATUS_OPTIONS, default='OP')
     delivery_info       = EmbeddedDocumentField(Delivery)
     payment_info        = EmbeddedDocumentField(Payment)
-    order_status        = StringField(min_length=2, max_length=3, choices=ORDER_STATUS_OPTIONS, default='OP')
 
-
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
+###############################################################################################################
 ###############################################################################################################
 class Comment(EmbeddedDocument):
     customer        = ObjectIdField(UserProfile)
@@ -280,7 +295,5 @@ class Review(Document):
     date_added        = DateTimeField()
     is_harsh          = BooleanField()
     comments          = SortedListField(EmbeddedDocumentField(Comment), ordering="date_of_comment", reverse=True)
-    #product_images   =
-
 
 ###############################################################################################################

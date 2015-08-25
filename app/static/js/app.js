@@ -20,6 +20,10 @@ app.config(['$routeProvider',
               templateUrl: '/static/templates/product-page.html',
               controller: 'ProductCtrl',
             }).
+            when('/checkout',{
+              templateUrl: '/static/templates/checkout-page.html',
+              controller: 'CartCtrl',
+            }).
             otherwise({
                 redirectTo: '/'
             });

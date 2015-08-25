@@ -147,7 +147,10 @@ def search(request, cId, page, query):
         if p > 1:
             data['prev'] = p - 1
     except:
+        data["products"] = []
         print "Unexpected error:", sys.exc_info()[0]
+
+    data["cartCount"] = request.session.get('cartCount', 0)
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 @require_GET

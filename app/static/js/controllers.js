@@ -73,8 +73,9 @@ grociousControllers.controller('StoreCtrl',function ($http, $location, $log, $sc
 
   $scope.search = function($page) {
     $http.get('/search/' + $scope.categoryId + "/" + $page + "/" + store.query).success(function(data) {
-      store.products = angular.fromJson(data.products);
       console.log(data)
+      store.products = angular.fromJson(data.products);
+      $scope.$root.cartCount = data.cartCount;
       if (typeof data.next !== 'undefined') {
         store.next = data.next;
         store.notNext = false;
