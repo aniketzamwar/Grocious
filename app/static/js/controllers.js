@@ -18,6 +18,38 @@ grociousControllers.controller('HeaderCtrl', function($scope){
   $scope.$root.cartCount = 0;
 });
 
+grociousControllers.controller('CartCheckoutCtrl', function($http, $scope){
+        // create a blank object to hold our form information
+  			// $scope will allow this to pass between controller and view
+  			$scope.deliveryInfo = {};
+        $scope.shippingOptions = [];
+        $scope.products = [];
+
+        // process the form
+        $scope.submitShippingForm = function() {
+  				console.log($scope.deliveryInfo);
+          $http({
+  			        method  : 'POST',
+  			        url     : '/cart/checkout/',
+  			        data    : $.param($scope.deliveryInfo),  // pass in data as strings
+  			        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+  			    }).success(function(data) {
+  			            console.log(data);
+  			            if (!data.success) {
+  			            	  // if not successful, bind errors to error variables
+  			                $scope.errorName = data.errors.name;
+  			            } else {
+  			            	  // if successful, bind success message to message
+  			                $scope.message = data.message;
+                        $scope.products = data.products;
+                        $scope.shippingOptions = data.shippingOptions;
+                        $scope.selectedShippingOption = data.shippingOptions[0];
+  			            }
+  			    });
+  			};
+
+});
+
 grociousControllers.controller('CartCtrl', function($http,$scope){
 
   $scope.getCart = function(){

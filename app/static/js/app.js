@@ -22,7 +22,7 @@ app.config(['$routeProvider',
             }).
             when('/checkout',{
               templateUrl: '/static/templates/checkout-page.html',
-              controller: 'CartCtrl',
+              controller: 'CartCheckoutCtrl',
             }).
             otherwise({
                 redirectTo: '/'

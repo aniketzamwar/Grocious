@@ -203,10 +203,10 @@ DELIVERY_OPTION_CHOICES = (
 )
 
 DELIVERY_CHARGES = {
-    'SP' : 0.0,
-    'SS' : 12.50,
-    'OS' : 27.56,
-    'TS' : 0.0,
+    'SP' : 0,
+    'SS' : 12.00,
+    'OS' : 27.00,
+    'TS' : 24.00,
 }
 
 DELIVERY_OPTION_CHOICES_AND_CHARGES = list()

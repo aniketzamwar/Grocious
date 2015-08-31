@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.contrib.auth import login, logout
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
 from app.models import DoesNotExist
@@ -294,7 +295,7 @@ def viewCart(request):
     return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
-def checkoutCart(request):
+def checkoutCart__OLDD(request):
     #if not request.user or not request.user.is_authenticated():
     #    return HttpResponseRedirect('/index/')
     message = None
@@ -325,6 +326,40 @@ def checkoutCart(request):
                                               'totalPrice': totalPrice,
                                               'message' : message }))
     return HttpResponse(html)
+
+@login_required
+@csrf_exempt
+def checkoutCart(request):
+    data = {}
+
+    # process request information
+    # validate information
+    # update the shipping inforamtion in the session
+    print request.POST
+
+    # Get cart information to return to client
+    cart = request.session.get('cart',{})
+    for key in cart.keys():
+        product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
+        if product:
+            cartItem = {
+                'name': product.name,
+                'count': cart[key],
+                'price':str(product.price),
+                'unit': product.get_unit_display(),
+                'quantity': str(product.quantity)
+            };
+            if "products" not in data:
+                data["products"] = {}
+            data["products"][key] = cartItem
+        else:
+            del cart[key]
+
+    data['shippingOptions'] = DELIVERY_OPTION_CHOICES_AND_CHARGES
+    data['message'] = "Success!!"
+    data['success'] = True
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
 
 @login_required
 def myInfo(request):

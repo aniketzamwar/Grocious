@@ -35,11 +35,11 @@
   </table>
   <div class="col-md-12 well cart-footer">
     <div>
-      <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{products | getTotalPrice | currency : "&#8377;"}}</span> </h4>
+      <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{products | getTotalPrice: 0 | currency : "&#8377;"}}</span> </h4>
     </div>
     <div>
       <a class="btn btn-success" type="button" value="Clear Cart">Clear Cart</a>
-      <a class="btn btn-success" type="button" value="Proceed to Checkout" a href="#/checkout">Proceed to Checkout</a>
+      <a class="btn btn-success" type="button" value="Proceed to Checkout" href="#/checkout">Proceed to Checkout</a>
     </div>
   </div>
 </div>

@@ -1,58 +1,182 @@
-<div class="col-md-8">
-
+<div class="col-md-10">
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingOne">
         <h4 class="panel-title">
           <a role="button" data-toggle="collapse" data-parent="#accordion" href="javascript:;" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Collapsible Group Item #1
+            Shipping Address and Information
           </a>
         </h4>
       </div>
       <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
         <div class="panel-body">
-          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          <form class="form-horizontal" name="shippingForm" ng-submit="submitShippingForm()" novalidate>
+            <fieldset>
+              <!-- Form Name -->
+              <!--legend></legend-->
+              <!-- Text input-->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <input id="delivery-for-person-fname" name="deliveryForPersonFname" type="text"
+                  placeholder="First Name" class="form-control input-md" required=""
+                  ng-model="deliveryInfo.deliveryForPersonFname" ng-required="true" ng-minlength="5" ng-maxlength="15">
+
+                  <span ng-show="shippingForm.deliveryForPersonFname.$error.minlength" class="help-block error">First name is too short.</span>
+                  <span ng-show="shippingForm.deliveryForPersonFname.$error.maxlength" class="help-block error">First name is too long.</span>
+                  <span ng-show="shippingForm.deliveryForPersonFname.$error.required && !shippingForm.deliveryForPersonFname.$pristine" class="help-block error">First name field is required.</span>
+                </div>
+              </div>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <input id="delivery-for-person-lname" name="deliveryForPersonLname" type="text"
+                  placeholder="Last Name" class="form-control input-md" required=""
+                  ng-model="deliveryInfo.deliveryForPersonLname" ng-required="true" ng-minlength="5" ng-maxlength="15">
+
+                  <span ng-show="shippingForm.deliveryForPersonLname.$error.minlength" class="help-block error">Last name is too short.</span>
+                  <span ng-show="shippingForm.deliveryForPersonLname.$error.maxlength" class="help-block error">Last name is too long.</span>
+                  <span ng-show="shippingForm.deliveryForPersonLname.$error.required && !shippingForm.deliveryForPersonLname.$pristine" class="help-block error">Last name is required.</span>
+                </div>
+              </div>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <input id="delivery-address-line1" name="deliveryAddressLine1" ng-model="deliveryInfo.deliveryAddressLine1" ng-required="true" ng-minlength="5" ng-maxlength="30" type="text" placeholder="Shipping Address Line 1" class="form-control input-md" required="">
+                  <span ng-show="shippingForm.deliveryAddressLine1.$error.minlength" class="help-block error">Address line is too short.</span>
+                  <span ng-show="shippingForm.deliveryAddressLine1.$error.maxlength" class="help-block error">Address line is too long.</span>
+                  <span ng-show="shippingForm.deliveryAddressLine1.$error.required && !shippingForm.deliveryAddressLine1.$pristine" class="help-block error">Field is required.</span>
+                </div>
+              </div>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <input id="delivery-address-line2" ng-model="deliveryInfo.deliveryAddressLine2" name="delivery-address-line2" type="text" placeholder="Shipping Address Line 2" class="form-control input-md">
+                </div>
+              </div>
+
+              <!-- Select Basic -->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <select ng-model="deliveryInfo.deliveryAddressCity" id="delivery-address-city" name="delivery-address-city" class="form-control">
+                    <option value="AKL" ng-selected="true">Akola</option>
+                    <option value="PUN">Pune</option>
+                    <option value="NAG">Nagpur</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Select Basic -->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <select ng-model="deliveryInfo.deliveryAddressState" id="delivery-address-state" name="delivery-address-state" class="form-control">
+                    <option value="MAH" ng-selected="true">Maharashtra</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Select Basic -->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <select ng-model="deliveryInfo.deliveryAddressCountry" ="delivery-address-country" name="delivery-address-country" class="form-control">
+                    <option value="IN" ng-selected="true">India</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Text input-->
+              <div class="form-group">
+                <div class="col-md-4">
+                  <input ng-model="deliveryInfo.deliveryAddressPincode" name="deliveryAddressPincode" ng-required="true" ng-pattern="/^[0-9]{6,6}$/" ng-minlength="6" ng-maxlength="6" id="delivery-address-pincode" type="text" placeholder="Please enter Zipcode" class="form-control input-md" required="">
+                  <span ng-show="shippingForm.deliveryAddressPincode.$error.pattern" class="help-block error">Please enter valid zipcode.</span>
+                  <span ng-show="shippingForm.deliveryAddressPincode.$error.required && !shippingForm.deliveryAddressPincode.$pristine" class="help-block error">Field is required.</span>
+                </div>
+              </div>
+              <div class="col-md-7">
+                <button type="submit" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo" class="btn btn-primary" ng-disabled="shippingForm.$invalid">Proceed to Review Cart</button>
+              </div>
+            </fieldset>
+          </form>
         </div>
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingTwo">
         <h4 class="panel-title">
-          <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="javascript:;" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-            Collapsible Group Item #2
+          <a class="collapsed" role="button" href="javascript:;" aria-expanded="false" aria-controls="collapseTwo">
+            Review Cart
           </a>
         </h4>
       </div>
       <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
         <div class="panel-body">
-          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          <table class="table table-hover table-condensed cart-body">
+            <tr class="well">
+              <td class="col-md-8">PRODUCT</td>
+              <td class="col-md-2">UNITS</td>
+              <td class="col-md-2">SUBTOTAL</td>
+            </tr>
+            <tr ng-repeat="(productId, product) in products">
+              <td class="col-md-8">
+                <div class="col-md-4">
+                  <a href="">
+                    <img class="media-object" ng-src="/product/icon/{{productId}}" alt="64x64" data-holder-rendered="true" style="width: 64px; height: auto;">
+                  </a>
+                </div>
+
+                <div class="col-md-8">
+                  <p class="product-name"><a href="#/product/{{productId}}">{{product.name}}</a></p>
+                  <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency : "&#8377;"}}</p>
+                </div>
+              </td>
+              <td class="col-md-3">
+                <p ng-form name="cartForm">
+                  <input type="number" name="quantity" required min="1" max="10" ng-model="product.count" ng-init="product.count"/> x {{ product.quantity }} {{product.unit}}
+                </p>
+                <a href="" ng-click = "removeItem(productId, product.count)">
+                  <small>Delete</small>
+                </a> |
+                <a href="" ng-hide="cartForm.quantity.$invalid" ng-click = "updateItem(productId, product.count)">
+                  <small>Update</small>
+                </a>
+              </td>
+              <td class="col-md-2 product-price">{{product.price * product.count | currency : "&#8377;"}}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <div class="form-group">
+                  <select class="form-control input-sm" ng-model="selectedShippingOption" ng-options="option.name for option in shippingOptions track by option.name"></select>
+                </div>
+              </td>
+              <td>
+                <span id="shippingPrice" class="product-price">{{ selectedShippingOption.price | number:2 | currency : "&#8377;" }}</span>
+              </td>
+            </tr>
+          </table>
+          <div class="col-md-12 well cart-footer">
+            <div>
+              <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{ products | getTotalPrice: selectedShippingOption.price | currency : "&#8377;" }}</span> </h4>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingThree">
         <h4 class="panel-title">
-          <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="javascript:;" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-            Collapsible Group Item #3
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="javascript:;" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseOne">
+            Payment Information
           </a>
         </h4>
       </div>
       <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
         <div class="panel-body">
-          Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+          
         </div>
       </div>
     </div>
   </div>
-
-  <!--div class="accordion" id="accordion2">
-    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#part1">
-      Shipping &amp; Address
-    </button>
-    <div id="part1" class="collapse in">Part 1</div>
-    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#part2">
-      Payment and Order
-    </button>
-    <div id="part2" class="collapse out">Part 2</div>
-  </div-->
 </div>
