@@ -160,6 +160,9 @@
             <div>
               <h4><b>Total Price: </b> <span id="totalPrice" class="product-price">{{ products | getTotalPrice: selectedShippingOption.price | currency : "&#8377;" }}</span> </h4>
             </div>
+            <div>
+              <a href="javascript:;" type="button" class="btn btn-success" data-toggle="collapse" data-parent="#accordion" data-target="#collapseThree" ng-click="updateShippingOption(selectedShippingOption.value);">Proceed to Payment</a>
+            </div>
           </div>
         </div>
       </div>
@@ -167,14 +170,110 @@
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingThree">
         <h4 class="panel-title">
-          <a role="button" data-toggle="collapse" data-parent="#accordion" href="javascript:;" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseOne">
+          <a role="button" href="javascript:;"  aria-expanded="true" aria-controls="collapseOne">
             Payment Information
           </a>
         </h4>
       </div>
       <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
         <div class="panel-body">
-          
+          <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <!--li role="presentation"><a href="javascript:;" data-target="#cod" aria-controls="home" role="tab" data-toggle="tab">Cash on Delivery</a></li-->
+              <li role="presentation" class="active"><a href="javascript:;" data-target="#cc" aria-controls="profile" role="tab" data-toggle="tab">Credit Card</a></li>
+              <li role="presentation"><a href="javascript:;" data-target="#dc" aria-controls="messages" role="tab" data-toggle="tab">Debit Card</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <!--div role="tabpanel" class="tab-pane fade" id="cod">Cash of delivery</div-->
+              <div role="tabpanel" class="tab-pane fade active in" id="cc">
+                <div class="row">
+                  <div class="col-md-offset-1">
+                    <p><span><h5>Please enter <mark>Credit Card</mark> info to complete the order!</h5></span></p><br/>
+                    <form class="form-horizontal" name="ccForm">
+                      <fieldset>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="Enter Credit Card Number" type="text" class="form-control input-md input-block-level" ng-model="number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="myForm.number.$card.type"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="Expiry of Card: MM/YYYY" type="text" class="form-control input-md input-block-level" ng-model="expiry" payments-validate="expiry" payments-format="expiry" />
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="Carholder Person Name" type="text" class="form-control input-md input-block-level"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="CVC Code" type="text" class="form-control input-md input-block-level" ng-model="cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-xs-5 col-xs-offset-1">
+                            <button type="submit" class="btn btn-primary btn-large">Order!</button>
+                          </div>
+                        </div>
+
+                      </fieldset>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="dc">
+                <div class="row">
+                  <div class="col-md-offset-1">
+                    <p><span><h5>Please enter <mark>Debit Card</mark> info to complete the order!</h5></span></p><br/>
+                    <form class="form-horizontal" name="dcForm">
+                      <fieldset>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="Enter Debit Card Number" type="text" class="form-control input-md input-block-level" ng-model="number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="myForm.number.$card.type"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="Expiry of Card: MM/YYYY" type="text" class="form-control input-md input-block-level" ng-model="expiry" payments-validate="expiry" payments-format="expiry" />
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="Carholder Person Name" type="text" class="form-control input-md input-block-level"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-md-4">
+                            <input placeholder="CVC Code" type="text" class="form-control input-md input-block-level" ng-model="cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type"/>
+                          </div>
+                        </div>
+
+                        <div class="form-group">
+                          <div class="col-xs-5 col-xs-offset-1">
+                            <button type="submit" class="btn btn-primary btn-large">Place Order!</button>
+                          </div>
+                        </div>
+
+                      </fieldset>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

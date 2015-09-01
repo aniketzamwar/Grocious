@@ -1,4 +1,4 @@
-var grociousControllers= angular.module('grociousApp.grociousControllers', []);
+var grociousControllers= angular.module('grociousApp.grociousControllers', ['angularPayments']);
 
 
 grociousControllers.controller('ProductCtrl', function($scope, $routeParams, $http) {
@@ -30,7 +30,7 @@ grociousControllers.controller('CartCheckoutCtrl', function($http, $scope){
   				console.log($scope.deliveryInfo);
           $http({
   			        method  : 'POST',
-  			        url     : '/cart/checkout/',
+  			        url     : '/cart/checkout/shippinginfo',
   			        data    : $.param($scope.deliveryInfo),  // pass in data as strings
   			        headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
   			    }).success(function(data) {
@@ -48,6 +48,24 @@ grociousControllers.controller('CartCheckoutCtrl', function($http, $scope){
   			    });
   			};
 
+        $scope.updateShippingOption = function(shippingOption) {
+          console.log(shippingOption);
+          $http({
+  			       method  : 'POST',
+  			       url     : '/cart/checkout/shippingoption',
+  			       data    : $.param({"shippingOption" : shippingOption}),  // pass in data as strings
+  			       headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+  			    }).success(function(data) {
+  			            console.log(data);
+  			            if (!data.success) {
+  			            	  // if not successful, bind errors to error variables
+  			                $scope.errorName = data.errors.name;
+  			            } else {
+  			            	  // if successful, bind success message to message
+  			                $scope.message = data.message;
+  			            }
+  			    });
+        };
 });
 
 grociousControllers.controller('CartCtrl', function($http,$scope){

@@ -329,7 +329,7 @@ def checkoutCart__OLDD(request):
 
 @login_required
 @csrf_exempt
-def checkoutCart(request):
+def shippinginfo(request):
     data = {}
 
     # process request information
@@ -356,6 +356,21 @@ def checkoutCart(request):
             del cart[key]
 
     data['shippingOptions'] = DELIVERY_OPTION_CHOICES_AND_CHARGES
+    data['message'] = "Success!!"
+    data['success'] = True
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+@csrf_exempt
+def shippingoption(request):
+    data = {}
+
+    # process request information
+    # validate information
+    # update the shipping option selected in the session
+    print request.POST
+
     data['message'] = "Success!!"
     data['success'] = True
 
