@@ -19,16 +19,49 @@ grociousControllers.controller('HeaderCtrl', function($scope){
 });
 
 grociousControllers.controller('OrderInfoCtrl', function($scope, $routeParams, $http) {
+    $scope.order = {}
     $http.get('/orderInfo/' + $routeParams.oId + "/").success(function(data) {
       $scope.order = angular.fromJson(data.order);
       console.log($scope.order);
     });
 });
 
+grociousControllers.controller('OrdersCtrl', function($scope, $routeParams, $http) {
+    $scope.orders = []
+    $scope.prev = -1
+    $scope.next = -1
+    $scope.notNext = true
+    $scope.notPrev = true
+
+    $scope.getOrders = function($pId){
+        $http.get( '/getOrders/' + $pId + '/').success( function( data ){
+            console.log(data);
+            $scope.orders = angular.fromJson(data.orders);
+            console.log($scope.orders);
+            if (typeof data.next !== 'undefined') {
+                $scope.next = data.next;
+                $scope.notNext = false;
+            } else {
+                $scope.notNext = true;
+            }
+            if (typeof data.prev !== 'undefined') {
+                $scope.prev = data.prev;
+                $scope.notPrev = false;
+            } else {
+                $scope.notPrev = true;
+            }
+        });
+    }
+
+  $scope.getOrders(1);
+
+});
+
 grociousControllers.controller('CartCheckoutCtrl', function($http, $scope, $location){
         // create a blank object to hold our form information
-  			// $scope will allow this to pass between controller and view
-  			$scope.deliveryInfo = {};
+  		// $scope will allow this to pass between controller and view
+
+  		$scope.deliveryInfo = {};
         $scope.paymentInfo = {};
         $scope.shippingOptions = [];
         $scope.products = {};

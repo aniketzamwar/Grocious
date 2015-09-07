@@ -205,6 +205,13 @@ DELIVERY_OPTION_CHOICES = (
   ('TS', 'Two day shipping'),
 )
 
+DELIVERY_OPTION_CHOICES_DICT = {
+  'SP' : 'Self Pickup',
+  'SS' : 'Standard shipping',
+  'OS' : 'One day shipping',
+  'TS' : 'Two day shipping',
+}
+
 DELIVERY_CHARGES = {
     'SP' : 0,
     'SS' : 12.00,
@@ -273,6 +280,10 @@ class Order(Document):
     ordered_items       = ListField(EmbeddedDocumentField(CartItem))
     delivery_info       = EmbeddedDocumentField(Delivery)
     payment_info        = EmbeddedDocumentField(Payment)
+
+    meta = {
+        'ordering': ['-order_date']
+    }
 
 ###############################################################################################################
 ###############################################################################################################

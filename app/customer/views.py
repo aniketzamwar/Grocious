@@ -15,7 +15,7 @@ from app.models import CartItem
 
 from forms import UserProfileForm, AddressForm, LoginForm, OrderForm, PaymentForm, DeliveryForm
 from app.models import UserProfile, Product, Category, Order
-from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_CHARGES, DELIVERY_OPTION_CHOICES_AND_CHARGES
+from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_CHARGES, DELIVERY_OPTION_CHOICES_AND_CHARGES, DELIVERY_OPTION_CHOICES_DICT
 
 CITY_CHOICES_SELECT = []
 for city in CITY_CHOICES:
@@ -450,6 +450,7 @@ def submitOrder(request):
         del request.session['cart']
         del request.session['shippingOption']
         del request.session['shippingAddress']
+        del request.session['cartCount']
     else:
         print "Invalid Invalid!!!!"
         data['message'] = "Error while processing the request!!!"
@@ -465,20 +466,18 @@ def getOrderDetails(request, orderId):
     dbOrder = Order.objects.get(id=bson.objectid.ObjectId(orderId))
 
     if dbOrder:
-        print "\ndbOrder", dbOrder
-
-        print "\ndbOrder tomongo", dbOrder.to_mongo()
-
-        print "\ndbORder tojson", dbOrder.to_json()
         if dbOrder.customer_id.id == request.user.id:
             # order found, process order and add to results
             order = {}
+            order['orderId'] = orderId
             order['order_total_amount'] = str(dbOrder.order_total_amount)
             order['order_cart_amount']  = str(dbOrder.order_cart_amount)
             order['order_status'] = dbOrder.get_order_status_display()
+            order['order_date'] = dbOrder.order_date.strftime("%A, %d/ %B/%Y %I:%M%p")
+
+            order['order_shipping_amount']  = str(dbOrder.delivery_info.price)
             order['delivery_info'] = {
                 'option'  : dbOrder.delivery_info.get_option_display(),
-                'price'   : str(dbOrder.delivery_info.price),
                 'fname'   : dbOrder.delivery_info.fname,
                 'lname'   : dbOrder.delivery_info.lname,
                 'line1'   : dbOrder.delivery_info.line1,
@@ -501,12 +500,12 @@ def getOrderDetails(request, orderId):
 
             for item in dbOrder.ordered_items:
                 order['ordered_items'].append({
-                    'item_unit_price' : str(item.item_unit_price),
-                    'item_count' : str(item.item_count),
-                    'item_name' : item.item_name,
-                    'item_quantity' : str(item.item_quantity),
-                    'item_unit' : item.get_item_unit_display(),
-                    'item_id' : str(item.item_id)
+                    'price' : str(item.item_unit_price),
+                    'count' : str(item.item_count),
+                    'name' : item.item_name,
+                    'quantity' : str(item.item_quantity),
+                    'unit' : item.get_item_unit_display(),
+                    'id' : str(item.item_id.id)
                 })
 
             print "\n\norder", order
@@ -519,6 +518,63 @@ def getOrderDetails(request, orderId):
     else:
         data['message'] = "No such order found!!"
         data['success'] = True
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def getOrders(request, page):
+    data = {}
+    data['orders'] = []
+
+    print page
+    p = 1
+    try:
+        p = int(page)
+        if p <= 0:
+            p = 1
+    except ValueError:
+        print "Unexpected error:", sys.exc_info()[0]
+        p = 1
+
+    ITEMS_PER_PAGE = 5
+    offset = (p - 1) * ITEMS_PER_PAGE
+
+    orders = Order.objects(customer_id=request.user.id).skip(offset).limit(ITEMS_PER_PAGE + 1).only('order_date', 'order_total_amount',
+                                                                                                    'order_cart_amount', 'order_status',
+                                                                                                    'payment_info.option', 'delivery_info.option',
+                                                                                                    'delivery_info.price', 'delivery_info.fname',
+                                                                                                    'delivery_info.lname', 'id')
+
+    if orders:
+        if len(orders) > ITEMS_PER_PAGE:
+            orders = orders[0 : ITEMS_PER_PAGE]
+            data['next'] = p + 1
+        ordersDict = []
+        for order in orders:
+            print "\n\n", order.to_json()
+
+            print "\n\ndelivery option", order.delivery_info.option
+            print order.delivery_info.get_option_display()
+
+            print "\n\npayment option option", order.payment_info.option
+            print order.payment_info.get_option_display()
+
+            orderDict = {
+                'order_date' : order.order_date.strftime("%A, %D %I:%M%p"),
+                'order_total_amount' : str(order.order_total_amount),
+                'order_cart_amount' : str(order.order_cart_amount),
+                'order_status' : order.get_order_status_display(),
+                'payment_info_option' :  order.payment_info.get_option_display(),
+                'delivery_info_option' : DELIVERY_OPTION_CHOICES_DICT[order.delivery_info.option],
+                'delivery_info_price' : str(order.delivery_info.price),
+                'delivery_info_fname' : order.delivery_info.fname,
+                'delivery_info_lname' : order.delivery_info.lname,
+                'order_id' : str(order.id),
+            }
+            ordersDict.append(orderDict)
+        data['orders'] = ordersDict
+    if p > 1:
+        data['prev'] = p - 1
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 

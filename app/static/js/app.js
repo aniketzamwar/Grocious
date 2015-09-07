@@ -28,6 +28,10 @@ app.config(['$routeProvider',
               templateUrl: '/static/templates/order-info-page.html',
               controller: 'OrderInfoCtrl',
             }).
+            when('/myOrders',{
+              templateUrl: '/static/templates/my-orders-page.html',
+              controller: 'OrdersCtrl',
+            }).
             otherwise({
                 redirectTo: '/'
             });

@@ -1,1 +1,101 @@
-<h4>Order placed</h4>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-7">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Order Info</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>Order Number</dt>
+                        <dd>{{ order.orderId }}</dd>
+                        <dt>Order Date</dt>
+                        <dd>{{ order.order_date }}</dd>
+                        <dt>Order Status</dt>
+                        <dd>{{ order.order_status }}</dd>
+                        <dt>Cart Amount</dt>
+                        <dd>{{ order.order_cart_amount | currency : "&#8377;" }}</dd>
+                        <dt>Shipping Amount</dt>
+                        <dd>{{ order.order_shipping_amount | currency : "&#8377;" }}</dd>
+                        <dt>Total Amount</dt>
+                        <dd>{{ order.order_total_amount | currency : "&#8377;" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Shipping Info</h3>
+                </div>
+                <div class="panel-body">
+                    <h4> {{ order.delivery_info.option }} </h4>
+                    <address>
+                        {{ order.delivery_info.fname }} {{ order.delivery_info.lname }} <br/>
+                        {{ order.delivery_info.line1 }} {{ order.delivery_info.line2 }} <br/>
+                        {{ order.delivery_info.city }}, {{ order.delivery_info.state }} <br/>
+                        {{ order.delivery_info.country }} <br/>
+                    </address>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-7">
+            <div class="panel panel-info">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Ordered Products</div>
+
+                <!-- Table -->
+                 <table class="table table-hover table-condensed cart-body">
+                      <tr class="well">
+                          <td class="col-md-8">PRODUCT</td>
+                          <td class="col-md-2">UNITS</td>
+                          <td class="col-md-2">SUBTOTAL</td>
+                      </tr>
+                      <tr ng-repeat="product in order.ordered_items">
+                          <td class="col-md-8">
+                            <div class="col-md-4">
+                              <a href="">
+                                <img class="media-object" ng-src="/product/icon/{{product.id}}" alt="64x64" data-holder-rendered="true" style="width: 64px; height: auto;">
+                              </a>
+                            </div>
+
+                            <div class="col-md-7">
+                              <p class="product-name"><a href="#/product/{{product.id}}">{{product.name}}</a></p>
+                              <p class="">{{product.quantity}} {{product.unit}} for {{product.price | currency : "&#8377;"}}</p>
+                            </div>
+                          </td>
+                          <td class="col-md-4">
+                            <p ng-form name="cartForm">
+                              <p> {{ product.count}} units of {{ product.quantity }} {{product.unit}} </p>
+                            </p>
+                          </td>
+                          <td class="col-md-2 product-price">{{product.price * product.count | currency : "&#8377;"}}</td>
+                      </tr>
+                  </table>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Payment Info</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal">
+                        <dt>Payed By</dt>
+                        <dd>{{ order.payment_info.option }}</dd>
+                        <dt>Card Info</dt>
+                        <dd>{{ order.payment_info.card_digits }}</dd>
+                        <dt>Transaction Id</dt>
+                        <dd>{{ order.payment_info.trans_id }}</dd>
+                        <dt>Payment Amount</dt>
+                        <dd>{{ order.payment_info.amount | currency : "&#8377;" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-md-13">
+        <div class="panel panel-info">
+            <!-- Default panel contents -->
+            <div class="panel-heading">All Orders</div>
+
+            <!-- Table -->
+            <table class="table table-hover table-condensed cart-body">
+                <tr class="well">
+                    <th class="col-md-3">Order Id</th>
+                    <th class="col-md-2">Order for</th>
+                    <th class="col-md-2">Order Date</th>
+                    <th class="col-md-1">Status</th>
+                    <th class="col-md-1">Amount</th>
+                    <th class="col-md-1">Shipping</th>
+                    <th class="col-md-1">Payed by</th>
+                    <th class="col-md-3"></th>
+                </tr>
+                <tr ng-repeat="order in orders">
+                    <td class="col-md-3"><a href="#/orderInfo/{{order.order_id}}"><p><b>{{ order.order_id }}</b></p></a></td>
+                    <td class="col-md-2"><p> {{ order.delivery_info_fname }} {{ order.delivery_info_lname }}</p></td>
+                    <td class="col-md-2"><p> {{ order.order_date }} </p></td>
+                    <td class="col-md-1"><p> {{ order.order_status }} </p></td>
+                    <td class="col-md-1"><p> {{ order.order_total_amount | currency : "&#8377;" }} </p></td>
+                    <td class="col-md-1"><p> {{ order.delivery_info_option }}</p></td>
+                    <td class="col-md-1"><p> {{ order.payment_info_option }}</p></td>
+                    <td class="col-md-3"><p> <a href="#/orderInfo/{{order.order_id}}" class="btn btn-primary" role="button">Details</a> </p></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12 text-center pagination">
+    <div class="btn-group" role="group" aria-label="Default button group">
+      <button type="button" class="btn btn-default" aria-label="Previous" id="prev" ng-disabled="notPrev" ng-model="prev" ng-click="getOrders(prev);$event.preventDefault();">«Previous</button>
+    </div>
+    <div class="btn-group" role="group" aria-label="Default button group">
+      <button type="button" class="btn btn-default" aria-label="Next" id="next" ng-disabled="notNext" ng-model="next" ng-click="getOrders(next);$event.preventDefault();">Next»</button>
+    </div>
+</div>

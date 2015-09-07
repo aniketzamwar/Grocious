@@ -5,6 +5,12 @@ body{
 .table tbody>tr>td.vert-align {
   vertical-align: middle;
 }
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
 .brand-name {
   margin-left: 2px;
   padding-left: 2px;
