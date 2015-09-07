@@ -1,5 +1,7 @@
+import datetime, uuid
 from mongoengine import *
 from mongoengine.django.auth import User
+
 
 ###############################################################################################################
 '''models.py
@@ -69,10 +71,10 @@ class UserProfile(User):
        Following fields come from User.
        first_name, last_name, password, email, username, date_joined, is_active"""
 
-    mobile  = StringField(max_length=10, verbose_name="Mobile Number:", help_text="Please enter your mobile number.")
-    address = EmbeddedDocumentField(Address)
-    gender  = StringField(max_length=2, choices=GENDER_CHOICES, verbose_name="Gender:", help_text="Please select your gender.")
-    dob     = DateTimeField(verbose_name="Date of Birth:", help_text="Please enter your birth date.")
+    mobile            = StringField(max_length=10, verbose_name="Mobile Number:", help_text="Please enter your mobile number.")
+    address           = EmbeddedDocumentField(Address)
+    gender            = StringField(max_length=2, choices=GENDER_CHOICES, verbose_name="Gender:", help_text="Please select your gender.")
+    dob               = DateTimeField(verbose_name="Date of Birth:", help_text="Please enter your birth date.")
     is_email_verified = BooleanField(default=False)
     #account_activity = EmbeddedDocumentField(Activity)
 
@@ -132,7 +134,7 @@ CATEGORY_NAME = {
 }
 
 '''
-## This is to import the catefory to data store
+## This is to import the category to data store
 
 import pymongo
 connection = pymongo.MongoClient("mongodb://localhost")
@@ -216,11 +218,17 @@ for option in DELIVERY_OPTION_CHOICES:
 
 
 class Delivery(EmbeddedDocument):
-    delivery_type          = StringField(max_length=2, choices=DELIVERY_OPTION_CHOICES)
-    delivery_price         = DecimalField()
-    delivery_for_person    = StringField()
-    delivery_address       = EmbeddedDocumentField(Address)
-    expected_delivery_date = DateTimeField()
+    option  = StringField(required=True, max_length=2, choices=DELIVERY_OPTION_CHOICES)
+    price   = DecimalField(required=True)
+    fname   = StringField(required=True)
+    lname   = StringField(required=True)
+    line1   = StringField(required=True, max_length=50)
+    line2   = StringField(required=False, max_length=50)
+    city    = StringField(required=True, choices=CITY_CHOICES, max_length=3)
+    state   = StringField(required=True, choices=STATE_CHOICES, max_length=3)
+    country = StringField(required=True, choices=COUNTRY_CHOICES, max_length=2)
+    pincode = IntField(required=True)
+    #expected_delivery_date = DateTimeField()
 
 PAYMENT_OPTIONS_CHOICES = (
     (1, 'Cash on delivery'),
@@ -228,22 +236,21 @@ PAYMENT_OPTIONS_CHOICES = (
     (3, 'Debit Card'),
 )
 
-class Card(EmbeddedDocument):
-    card_type             = StringField()    # Visa, Master Card, etc...
-    card_last_four_digits = StringField()
-    card_transaction_info = DictField()
-
 class Payment(EmbeddedDocument):
-    payment_type     = StringField(max_length=2, choices=PAYMENT_OPTIONS_CHOICES)
-    payment_amount   = DecimalField()
-    payment_trans_id = StringField()
-    card_info        = EmbeddedDocumentField(Card)
+    option                = IntField(choices=PAYMENT_OPTIONS_CHOICES, required=True)
+    amount                = DecimalField(required=True)
+    trans_id              = StringField(default=str(uuid.uuid4()))
+    card_digits           = StringField()
+    card_transaction_info = DictField()
 
 ###############################################################################################################
 class CartItem(EmbeddedDocument):
     item_unit_price = DecimalField(required=True) # we store the price here, if the price changes after order
     item_count      = DecimalField(required=True)
-    item_id         = ObjectIdField(Product)
+    item_name       = StringField(required=True)
+    item_quantity   = DecimalField(required=True)
+    item_unit       = StringField(required=True, max_length=2, choices=UNIT_CHOICES, default="KG")
+    item_id         = ReferenceField(Product)
 
 ###############################################################################################################
 ORDER_STATUS_OPTIONS = (
@@ -257,9 +264,9 @@ ORDER_STATUS_OPTIONS = (
 )
 
 class Order(Document):
-    customer_id         = ObjectIdField(UserProfile)
+    customer_id         = ReferenceField(UserProfile)
     ordered_items       = ListField(EmbeddedDocumentField(CartItem))
-    order_date          = DateTimeField()
+    order_date          = DateTimeField(default=datetime.datetime.now)
     order_total_amount  = DecimalField()   # total includes shipping, tax and discounts if any
     order_cart_amount   = DecimalField()   # cart amount
     order_status        = StringField(min_length=2, max_length=3, choices=ORDER_STATUS_OPTIONS, default='OP')
@@ -276,7 +283,7 @@ class Order(Document):
 ###############################################################################################################
 ###############################################################################################################
 class Comment(EmbeddedDocument):
-    customer        = ObjectIdField(UserProfile)
+    customer        = ReferenceField(UserProfile)
     date_of_comment = DateTimeField()
     comment         = StringField()
     is_harsh        = BooleanField()
@@ -284,9 +291,9 @@ class Comment(EmbeddedDocument):
 
 ###############################################################################################################
 class Review(Document):
-    product           = ObjectIdField(Product)
-    order             = ObjectIdField(Order)
-    customer          = ObjectIdField(UserProfile)
+    product           = ReferenceField(Product)
+    order             = ReferenceField(Order)
+    customer          = ReferenceField(UserProfile)
     ratings           = IntField()
     review_state      = BooleanField()
     review_desc       = StringField()

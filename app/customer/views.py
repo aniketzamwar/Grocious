@@ -10,11 +10,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
-from app.models import DoesNotExist
+from app.models import DoesNotExist, CartItem
 
-from forms import UserProfileForm, AddressForm, LoginForm
-from app.models import UserProfile, Product, Category
-from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_OPTION_CHOICES_AND_CHARGES
+from forms import UserProfileForm, AddressForm, LoginForm, OrderForm, PaymentForm, DeliveryForm
+from app.models import UserProfile, Product, Category, Order
+from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, DELIVERY_CHARGES, DELIVERY_OPTION_CHOICES_AND_CHARGES
 
 CITY_CHOICES_SELECT = []
 for city in CITY_CHOICES:
@@ -79,7 +79,6 @@ def logoutUser(request):
         logout(request)
     return HttpResponseRedirect('/index/')
 
-@require_POST
 def newAccount(request):
     if request.user and request.user.is_authenticated():
         return HttpResponseRedirect('/main/')
@@ -333,9 +332,20 @@ def shippinginfo(request):
     data = {}
 
     # process request information
-    # validate information
     # update the shipping inforamtion in the session
     print request.POST
+
+    shippingInfo = {}
+    shippingInfo['line1']   = request.POST.get('deliveryAddressLine1')
+    shippingInfo['line2']   = request.POST.get('deliveryAddressLine2', '')
+    shippingInfo['city']    = request.POST.get('deliveryAddressCity')
+    shippingInfo['state']   = request.POST.get('deliveryAddressState')
+    shippingInfo['country'] = request.POST.get('deliveryAddressCountry')
+    shippingInfo['pincode'] = request.POST.get('deliveryAddressPincode')
+    shippingInfo['fname'] = request.POST.get('deliveryForPersonFname')
+    shippingInfo['lname'] = request.POST.get('deliveryForPersonLname')
+
+    request.session['shippingAddress'] = shippingInfo
 
     # Get cart information to return to client
     cart = request.session.get('cart',{})
@@ -369,10 +379,151 @@ def shippingoption(request):
     # process request information
     # validate information
     # update the shipping option selected in the session
-    print request.POST
+    print request.POST.get('shippingOption')
+    request.session['shippingOption'] = request.POST.get('shippingOption')
 
     data['message'] = "Success!!"
     data['success'] = True
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+@csrf_exempt
+def submitOrder(request):
+    data = {}
+
+    # process request information
+    # validate information
+    # update the shipping inforamtion in the session
+
+    shippingAddress = request.session.get('shippingAddress')
+    shippingOption = request.session.get('shippingOption')
+
+    cart = request.session.get('cart')
+    cartItems = []
+    orderCartAmount = 0
+    for key in cart.keys():
+        product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
+        if product:
+            orderCartAmount = orderCartAmount + long(cart[key]) * float(product.price)
+            item = CartItem(item_unit_price=product.price,
+                            item_count=cart[key],
+                            item_name=product.name,
+                            item_quantity=product.quantity,
+                            item_unit=product.unit,
+                            item_id=key)
+            cartItems.append(item)
+            print "item", item.to_mongo()
+        else:
+            print "Invalid item in cart."
+            del cart[key]
+
+    total_amount = orderCartAmount + float(DELIVERY_CHARGES[shippingOption])
+
+    orderForm = OrderForm({'customer_id' : request.user.id,
+                           'order_total_amount': total_amount,
+                           'order_cart_amount': orderCartAmount })
+
+    order = orderForm.save(cartItems, commit=False)
+
+    payment = PaymentForm(order,
+                          { 'option' : int(request.POST.get('type')),
+                            'amount' : total_amount,
+                            'card_digits': request.POST.get('number')[-4:]},
+                           position=5)
+
+    shippingAddress['price'] = DELIVERY_CHARGES[shippingOption]
+    shippingAddress['option'] = shippingOption
+
+    delivery = DeliveryForm(order, shippingAddress, position=4)
+
+    if delivery.is_valid() and payment.is_valid():
+        delivery.save(commit=True)
+        payment.save(commit=True)
+        print order.to_mongo()
+        order.save()
+
+        data['message'] = "Success!!"
+        data['success'] = True
+        data['url'] = '/orderInfo/' + str(order.id)
+        data['info'] = {}
+        data['info']['transId'] = str(order.payment_info.trans_id)
+        data['info']['orderId'] = str(order.id)
+        print data
+        del request.session['cart']
+        del request.session['shippingOption']
+        del request.session['shippingAddress']
+    else:
+        print "Invalid Invalid!!!!"
+        data['message'] = "Error while processing the request!!!"
+        data['success'] = False
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def getOrderDetails(request, orderId):
+
+    data = {}
+    print orderId
+    dbOrder = Order.objects.get(id=bson.objectid.ObjectId(orderId))
+
+    if dbOrder:
+        print "\ndbOrder", dbOrder
+
+        print "\ndbOrder tomongo", dbOrder.to_mongo()
+
+        print "\ndbORder tojson", dbOrder.to_json()
+        if dbOrder.customer_id.id == request.user.id:
+            # order found, process order and add to results
+            '''{
+                "_id": {"$oid": "55ecd809ca289f4216fb0f7b"},
+                "customer_id": {"$oid": "5520e589a8db32b56a23271c"},
+                "ordered_items": [{"item_unit_price": 2.33, "item_count": 1.0, "item_id": {"$oid": "5520eff1a8db32b79abcfbda"}}
+                ],
+                "order_date": {"$date": 1441585161168},
+                "order_total_amount": 2.33, "order_cart_amount": 2.33,
+                "order_status": "OP",
+                "delivery_info": {"option": "SP", "price": 0.0, "fname": "Shruti", "lname": "Zamwar", "line1": "2353 Portland Street,", "city": "PUN", "state": "MAH", "country": "IN", "pincode": 900073},
+                "payment_info": {"option": 3, "amount": 2.33, "trans_id": "c3e0480d-1599-49b3-ae19-bf3886a5d4a5", "card_digits": "6565", "card_transaction_info": {}}
+                }
+            '''
+            order = {}
+            order['order_total_amount'] = str(dbOrder.order_total_amount)
+            order['order_cart_amount']  = str(dbOrder.order_cart_amount)
+            order['order_status'] = dbOrder.get_order_status_display()
+            order['delivery_info'] = {
+                'option'  : dbOrder.delivery_info.get_option_display(),
+                'price'   : str(dbOrder.delivery_info.price),
+                'fname'   : dbOrder.delivery_info.fname,
+                'lname'   : dbOrder.delivery_info.lname,
+                'line1'   : dbOrder.delivery_info.line1,
+                'city'    : dbOrder.delivery_info.get_city_display(),
+                'state'   : dbOrder.delivery_info.get_state_display(),
+                'country' : dbOrder.delivery_info.get_country_display()
+            }
+
+            if 'line2' in dbOrder.delivery_info:
+                order['delivery_info']['line2'] = dbOrder.delivery_info.line2;
+
+            order['payment_info'] = {
+                'option'      : dbOrder.payment_info.get_option_display(),
+                'amount'      : str(dbOrder.payment_info.amount),
+                'trans_id'    : dbOrder.payment_info.trans_id,
+                'card_digits' : "**** **** **** " + dbOrder.payment_info.card_digits,
+            }
+
+            order['ordered_items'] = dbOrder.ordered_items.to_json()
+
+            print "\n\norder", order
+            print "\n\n order json dumps", json.dumps(order)
+
+            data['order'] = order
+        else:
+            data['message'] = "No such order found!!"
+            data['success'] = True
+    else:
+        data['message'] = "No such order found!!"
+        data['success'] = True
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 

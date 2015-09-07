@@ -6,6 +6,7 @@ from app.models import *
 from django import forms
 from mongoengine import *
 import datetime
+import bson
 
 class LoginForm(forms.Form):
     username    = forms.CharField(max_length = 25, required = True, label = "Username:")
@@ -27,7 +28,6 @@ class UserProfileForm(DocumentForm):
         document=UserProfile
         fields=['first_name', 'last_name', 'password', 'email', 'username', 'mobile', 'gender', 'dob', 'address', ]
 
-
     def save(self, commit):
         user = super(UserProfileForm, self).save(commit=False)
         user.set_password(self.cleaned_data['password'])
@@ -40,7 +40,7 @@ class UserProfileForm(DocumentForm):
 
 class AddressForm(EmbeddedDocumentForm):
     line1   = forms.CharField(widget=forms.TextInput, required=True)
-    line2   = forms.CharField(widget=forms.TextInput, required=True)
+    line2   = forms.CharField(widget=forms.TextInput)
     city    = forms.ChoiceField(widget=forms.Select, choices=CITY_CHOICES, required=True)
     state   = forms.ChoiceField(widget=forms.Select, choices=STATE_CHOICES, required=True)
     country = forms.ChoiceField(widget=forms.Select, choices=COUNTRY_CHOICES, required=True)
@@ -52,3 +52,38 @@ class AddressForm(EmbeddedDocumentForm):
         fields=['line1', 'line2', 'city', 'state', 'country', 'pincode',]
 
 #class ActivityForm(EmbeddedDocumentForm):
+
+class OrderForm(DocumentForm):
+
+    class Meta:
+        document=Order
+        fields=['customer_id', 'order_total_amount', 'order_cart_amount', 'ordered_items', 'delivery_info', 'payment_info', ]
+
+    def save(self, items, commit):
+        order = super(OrderForm, self).save(commit=False)
+        dbOrder = order.save(commit=commit)
+        print dbOrder.to_json()
+        for item in items:
+            print "item", item.to_mongo()
+            dbOrder.ordered_items.append(item)
+        return dbOrder
+
+class DeliveryForm(EmbeddedDocumentForm):
+
+    class Meta:
+        document = Delivery
+        embedded_field_name = 'delivery_info'
+        fields = ['option', 'price','fname', 'lname', 'line1', 'line2', 'city', 'state', 'country', 'pincode', ]
+
+class PaymentForm(EmbeddedDocumentForm):
+    class Meta:
+        document = Payment
+        embedded_field_name = 'payment_info'
+        fields = ['option', 'amount', 'trans_id', 'card_digits',]
+
+    '''def save(self, commit=True):
+        payment = super(PaymentForm, self).save(commit=False)
+        payment.trans_id = str(uuid.uuid4())
+        print payment.trans_id
+        dbPayment = payment.save(commit=commit)
+        return dbPayment'''

@@ -1,10 +1,10 @@
-<div class="col-md-10">
+<div class="col-md-8">
   <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
     <div class="panel panel-default">
       <div class="panel-heading" role="tab" id="headingOne">
         <h4 class="panel-title">
           <a role="button" data-toggle="collapse" data-parent="#accordion" href="javascript:;" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Shipping Address and Information
+            Shipping Info
           </a>
         </h4>
       </div>
@@ -16,7 +16,7 @@
               <!--legend></legend-->
               <!-- Text input-->
               <div class="form-group">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <input id="delivery-for-person-fname" name="deliveryForPersonFname" type="text"
                   placeholder="First Name" class="form-control input-md" required=""
                   ng-model="deliveryInfo.deliveryForPersonFname" ng-required="true" ng-minlength="5" ng-maxlength="15">
@@ -29,7 +29,7 @@
 
               <!-- Text input-->
               <div class="form-group">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <input id="delivery-for-person-lname" name="deliveryForPersonLname" type="text"
                   placeholder="Last Name" class="form-control input-md" required=""
                   ng-model="deliveryInfo.deliveryForPersonLname" ng-required="true" ng-minlength="5" ng-maxlength="15">
@@ -42,7 +42,7 @@
 
               <!-- Text input-->
               <div class="form-group">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <input id="delivery-address-line1" name="deliveryAddressLine1" ng-model="deliveryInfo.deliveryAddressLine1" ng-required="true" ng-minlength="5" ng-maxlength="30" type="text" placeholder="Shipping Address Line 1" class="form-control input-md" required="">
                   <span ng-show="shippingForm.deliveryAddressLine1.$error.minlength" class="help-block error">Address line is too short.</span>
                   <span ng-show="shippingForm.deliveryAddressLine1.$error.maxlength" class="help-block error">Address line is too long.</span>
@@ -52,16 +52,17 @@
 
               <!-- Text input-->
               <div class="form-group">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <input id="delivery-address-line2" ng-model="deliveryInfo.deliveryAddressLine2" name="delivery-address-line2" type="text" placeholder="Shipping Address Line 2" class="form-control input-md">
                 </div>
               </div>
 
               <!-- Select Basic -->
               <div class="form-group">
-                <div class="col-md-4">
-                  <select ng-model="deliveryInfo.deliveryAddressCity" id="delivery-address-city" name="delivery-address-city" class="form-control">
-                    <option value="AKL" ng-selected="true">Akola</option>
+                <div class="col-md-6">
+                  <select ng-model="deliveryInfo.deliveryAddressCity" id="delivery-address-city" name="delivery-address-city" class="form-control" required>
+                    <option value=''>- Please choose City -</option>
+                    <option value="AKL">Akola</option>
                     <option value="PUN">Pune</option>
                     <option value="NAG">Nagpur</option>
                   </select>
@@ -70,31 +71,33 @@
 
               <!-- Select Basic -->
               <div class="form-group">
-                <div class="col-md-4">
-                  <select ng-model="deliveryInfo.deliveryAddressState" id="delivery-address-state" name="delivery-address-state" class="form-control">
-                    <option value="MAH" ng-selected="true">Maharashtra</option>
+                <div class="col-md-6">
+                  <select ng-model="deliveryInfo.deliveryAddressState" id="delivery-address-state" name="delivery-address-state" class="form-control" required>
+                    <option value=''>- Please choose State -</option>
+                    <option value="MAH">Maharashtra</option>
                   </select>
                 </div>
               </div>
 
               <!-- Select Basic -->
               <div class="form-group">
-                <div class="col-md-4">
-                  <select ng-model="deliveryInfo.deliveryAddressCountry" ="delivery-address-country" name="delivery-address-country" class="form-control">
-                    <option value="IN" ng-selected="true">India</option>
+                <div class="col-md-6">
+                  <select ng-model="deliveryInfo.deliveryAddressCountry" id="delivery-address-country" name="delivery-address-country" class="form-control" required>
+                    <option value=''>- Please choose Country -</option>
+                    <option value="IN">India</option>
                   </select>
                 </div>
               </div>
 
               <!-- Text input-->
               <div class="form-group">
-                <div class="col-md-4">
+                <div class="col-md-6">
                   <input ng-model="deliveryInfo.deliveryAddressPincode" name="deliveryAddressPincode" ng-required="true" ng-pattern="/^[0-9]{6,6}$/" ng-minlength="6" ng-maxlength="6" id="delivery-address-pincode" type="text" placeholder="Please enter Zipcode" class="form-control input-md" required="">
                   <span ng-show="shippingForm.deliveryAddressPincode.$error.pattern" class="help-block error">Please enter valid zipcode.</span>
                   <span ng-show="shippingForm.deliveryAddressPincode.$error.required && !shippingForm.deliveryAddressPincode.$pristine" class="help-block error">Field is required.</span>
                 </div>
               </div>
-              <div class="col-md-7">
+              <div class="col-md-7 col-md-offset-1">
                 <button type="submit" data-toggle="collapse" data-parent="#accordion" data-target="#collapseTwo" class="btn btn-primary" ng-disabled="shippingForm.$invalid">Proceed to Review Cart</button>
               </div>
             </fieldset>
@@ -106,7 +109,7 @@
       <div class="panel-heading" role="tab" id="headingTwo">
         <h4 class="panel-title">
           <a class="collapsed" role="button" href="javascript:;" aria-expanded="false" aria-controls="collapseTwo">
-            Review Cart
+            Review Cart and Shipping Option
           </a>
         </h4>
       </div>
@@ -135,7 +138,7 @@
                 <p ng-form name="cartForm">
                   <input type="number" name="quantity" required min="1" max="10" ng-model="product.count" ng-init="product.count"/> x {{ product.quantity }} {{product.unit}}
                 </p>
-                <a href="" ng-click = "removeItem(productId, product.count)">
+                <a href="" ng-click="removeItem(productId, product.count)">
                   <small>Delete</small>
                 </a> |
                 <a href="" ng-hide="cartForm.quantity.$invalid" ng-click = "updateItem(productId, product.count)">
@@ -148,7 +151,7 @@
               <td></td>
               <td>
                 <div class="form-group">
-                  <select class="form-control input-sm" ng-model="selectedShippingOption" ng-options="option.name for option in shippingOptions track by option.name"></select>
+                  <select class="form-control input-sm" ng-model="selectedShippingOption" ng-options="option.name for option in shippingOptions track by option.name" required></select>
                 </div>
               </td>
               <td>
@@ -192,36 +195,81 @@
                 <div class="row">
                   <div class="col-md-offset-1">
                     <p><span><h5>Please enter <mark>Credit Card</mark> info to complete the order!</h5></span></p><br/>
-                    <form class="form-horizontal" name="ccForm">
+                    <form class="form-horizontal" name="ccForm" ng-submit="submitOrder()" novalidate>
                       <fieldset>
-
+                        <input type=hidden ng-model="paymentInfo.type" ng-init="paymentInfo.type='2'" value="2"/>
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="Enter Credit Card Number" type="text" class="form-control input-md input-block-level" ng-model="number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="myForm.number.$card.type"/>
+                          <div class="col-md-6">
+                            <input placeholder="Enter Credit Card Number" type="text" class="form-control input-md input-block-level" name="number" ng-model="paymentInfo.number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="ccForm.number.$card.type" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="Expiry of Card: MM/YYYY" type="text" class="form-control input-md input-block-level" ng-model="expiry" payments-validate="expiry" payments-format="expiry" />
+                          <div class="col-md-6">
+                            <input placeholder="Expiry of Card: MM/YYYY" type="text" class="form-control input-md input-block-level" ng-model="paymentInfo.expiry" payments-validate="expiry" payments-format="expiry" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="Carholder Person Name" type="text" class="form-control input-md input-block-level"/>
+                          <div class="col-md-6">
+                            <input placeholder="Carholder Person Name" type="text" class="form-control input-md input-block-level" ng-model="paymentInfo.name" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="CVC Code" type="text" class="form-control input-md input-block-level" ng-model="cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type"/>
+                          <div class="col-md-6">
+                            <input placeholder="CVC Code" type="text" class="form-control input-md input-block-level" ng-model="paymentInfo.cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type" required/>
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="form-group">
+                          <div class="col-md-6">
+                            <input id="billing-address-line1" name="billingAddressLine1" ng-model="paymentInfo.billingAddressLine1" ng-required="true" ng-minlength="5" ng-maxlength="30" type="text" placeholder="Billing Address Line 1" class="form-control input-md" required="">
+                            <span ng-show="ccForm.billingAddressLine1.$error.minlength" class="help-block error">Address line is too short.</span>
+                            <span ng-show="ccForm.billingAddressLine1.$error.maxlength" class="help-block error">Address line is too long.</span>
+                            <span ng-show="ccForm.billingAddressLine1.$error.required && !ccForm.billingAddressLine1.$pristine" class="help-block error">Field is required.</span>
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="form-group">
+                          <div class="col-md-6">
+                            <input id="billing-address-line2" ng-model="paymentInfo.billingAddressLine2" name="billingAddressLine2" type="text" placeholder="Billing Address Line 2" class="form-control input-md">
+                          </div>
+                        </div>
+
+                        <!-- Select Basic -->
+                        <div class="form-group">
+                          <div class="col-md-6">
+                            <select ng-model="paymentInfo.billingAddressCity" id="billing-address-city" name="billing-address-city" class="form-control" required>
+                              <option value=''>- Please choose City -</option>
+                              <option value="AKL">Akola</option>
+                              <option value="PUN">Pune</option>
+                              <option value="NAG">Nagpur</option>
+                            </select>
+                            <select ng-model="paymentInfo.billingAddressState" id="billing-address-state" name="billing-address-state" class="form-control" required>
+                              <option value=''>- Please choose State -</option>
+                              <option value="MAH">Maharashtra</option>
+                            </select>
+                            <select ng-model="paymentInfo.billingAddressCountry" id="billing-address-country" name="billing-address-country" class="form-control" required>
+                              <option value=''>- Please choose Country -</option>
+                              <option value="IN">India</option>
+                            </select>
+                          </div>
+                        </div>
+                        <!-- Text input-->
+                        <div class="form-group">
+                          <div class="col-md-6">
+                            <input ng-model="paymentInfo.billingAddressPincode" name="billingAddressPincode" ng-required="true" ng-pattern="/^[0-9]{6,6}$/" ng-minlength="6" ng-maxlength="6" id="billing-address-pincode" type="text" placeholder="Please enter Zipcode" class="form-control input-md" required="">
+                            <span ng-show="ccForm.billingAddressPincode.$error.pattern" class="help-block error">Please enter valid zipcode.</span>
+                            <span ng-show="ccForm.billingAddressPincode.$error.required && !ccForm.billingAddressPincode.$pristine" class="help-block error">Field is required.</span>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-xs-5 col-xs-offset-1">
-                            <button type="submit" class="btn btn-primary btn-large">Place Order!</button>
+                          <div class="col-xs-5 col-xs-offset-2">
+                            <button type="submit" class="btn btn-primary btn-large" ng-disabled="ccForm.$invalid">Place Order!</button>
                           </div>
                         </div>
 
@@ -234,39 +282,38 @@
                 <div class="row">
                   <div class="col-md-offset-1">
                     <p><span><h5>Please enter <mark>Debit Card</mark> info to complete the order!</h5></span></p><br/>
-                    <form class="form-horizontal" name="dcForm">
+                    <form class="form-horizontal" name="dcForm" ng-submit="submitOrder()" novalidate>
                       <fieldset>
-
+                        <input type=hidden ng-model="paymentInfo.type" ng-init="paymentInfo.type='3'" value="3"/>
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="Enter Debit Card Number" type="text" class="form-control input-md input-block-level" ng-model="number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="myForm.number.$card.type"/>
+                          <div class="col-md-6">
+                            <input placeholder="Enter Debit Card Number" type="text" class="form-control input-md input-block-level" name="paymentInfo.number" ng-model="paymentInfo.number" payments-validate="card" payments-format="card" payments-type-model="type" ng-class="dcForm.paymentInfo.number.$card.type" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="Expiry of Card: MM/YYYY" type="text" class="form-control input-md input-block-level" ng-model="expiry" payments-validate="expiry" payments-format="expiry" />
+                          <div class="col-md-6">
+                            <input placeholder="Expiry of Card: MM/YYYY" type="text" class="form-control input-md input-block-level" ng-model="paymentInfo.expiry" payments-validate="expiry" payments-format="expiry" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="Carholder Person Name" type="text" class="form-control input-md input-block-level"/>
+                          <div class="col-md-6">
+                            <input placeholder="Carholder Person Name" type="text" ng-model="paymentInfo.name" class="form-control input-md input-block-level" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-md-4">
-                            <input placeholder="CVC Code" type="text" class="form-control input-md input-block-level" ng-model="cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type"/>
+                          <div class="col-md-6">
+                            <input placeholder="CVC Code" type="text" class="form-control input-md input-block-level" ng-model="paymentInfo.cvc" payments-validate="cvc" payments-format="cvc" payments-type-model="type" required/>
                           </div>
                         </div>
 
                         <div class="form-group">
-                          <div class="col-xs-5 col-xs-offset-1">
-                            <button type="submit" class="btn btn-primary btn-large">Place Order!</button>
+                          <div class="col-xs-6 col-xs-offset-2">
+                            <button type="submit" class="btn btn-primary btn-large" ng-disabled="dcForm.$invalid">Place Order!</button>
                           </div>
                         </div>
-
                       </fieldset>
                     </form>
                   </div>
@@ -278,4 +325,35 @@
       </div>
     </div>
   </div>
+</div>
+<div class="col-md-4">
+  <li class="list-group-item list-group-item-danger" ng-hide="shippingForm.$invalid">
+    <h4><b><p class="text-center">Order Summary</p></b></h4>
+  </li>
+  <ul class="list-group">
+    <li class="list-group-item list-group-item-success" ng-hide="shippingForm.$invalid">
+      <address>
+        <h4>Delivery Address</h4>
+        <strong>{{deliveryInfo.deliveryForPersonFname}} {{deliveryInfo.deliveryForPersonLname}}</strong><br/>
+        {{deliveryInfo.deliveryAddressLine1}} {{deliveryInfo.deliveryAddressLine2}} <br/>
+        {{deliveryInfo.deliveryAddressCity}}, {{deliveryInfo.deliveryAddressState}} - {{deliveryInfo.deliveryAddressPincode}} <br/>
+        {{deliveryInfo.deliveryAddressCountry}}
+      </address>
+    </li>
+    <li class="list-group-item list-group-item-info" ng-show="showPriceInfo">
+      <h4>Price Info</h4>
+      <h5>Cart Price: <span class="pull-right">{{ products | getTotalPrice: 0 | currency : "&#8377;" }}</span></h5>
+      <h5>Shipping Price: <span class="pull-right">{{ selectedShippingOption.price | currency : "&#8377;" }}</span></h5>
+      <h4><b>Total Order Price: <span class="pull-right">{{ products | getTotalPrice: selectedShippingOption.price | currency : "&#8377;" }}</span></b></h4>
+    </li>
+    <li class="list-group-item list-group-item-warning" ng-hide="ccForm.$invalid">
+      <address>
+        <h4>Billing Address</h4>
+        <strong>{{paymentInfo.name}}</strong><br/>
+        {{paymentInfo.billingAddressLine1}} {{paymentInfo.billingAddressLine2}} <br/>
+        {{paymentInfo.billingAddressCity}}, {{paymentInfo.billingAddressState}} - {{paymentInfo.billingAddressPincode}} <br/>
+        {{paymentInfo.billingAddressCountry}}
+      </address>
+    </li>
+  </ul>
 </div>
