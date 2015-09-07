@@ -1,12 +1,8 @@
-from mongodbforms import DocumentForm, EmbeddedDocumentForm, documentform_factory
-from mongoengine.django.auth import User
-from django.utils.translation import gettext as _
+from mongodbforms import DocumentForm, EmbeddedDocumentForm
 from django.forms.extras.widgets import SelectDateWidget
-from app.models import *
+from app.models import UserProfile, Address, Order, Payment, Delivery
+from app.models import CITY_CHOICES, STATE_CHOICES, COUNTRY_CHOICES, GENDER_CHOICES
 from django import forms
-from mongoengine import *
-import datetime
-import bson
 
 class LoginForm(forms.Form):
     username    = forms.CharField(max_length = 25, required = True, label = "Username:")
@@ -62,7 +58,6 @@ class OrderForm(DocumentForm):
     def save(self, items, commit):
         order = super(OrderForm, self).save(commit=False)
         dbOrder = order.save(commit=commit)
-        print dbOrder.to_json()
         for item in items:
             print "item", item.to_mongo()
             dbOrder.ordered_items.append(item)
@@ -80,10 +75,3 @@ class PaymentForm(EmbeddedDocumentForm):
         document = Payment
         embedded_field_name = 'payment_info'
         fields = ['option', 'amount', 'trans_id', 'card_digits',]
-
-    '''def save(self, commit=True):
-        payment = super(PaymentForm, self).save(commit=False)
-        payment.trans_id = str(uuid.uuid4())
-        print payment.trans_id
-        dbPayment = payment.save(commit=commit)
-        return dbPayment'''

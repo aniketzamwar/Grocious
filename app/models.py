@@ -1,5 +1,6 @@
 import datetime, uuid
-from mongoengine import *
+from mongoengine import EmbeddedDocument, Document, StringField, IntField, DateTimeField, ListField, DictField, \
+    EmbeddedDocumentField, BooleanField, ReferenceField, SortedListField, DecimalField, FileField, URLField
 from mongoengine.django.auth import User
 
 
@@ -245,11 +246,11 @@ class Payment(EmbeddedDocument):
 
 ###############################################################################################################
 class CartItem(EmbeddedDocument):
-    item_unit_price = DecimalField(required=True) # we store the price here, if the price changes after order
-    item_count      = DecimalField(required=True)
-    item_name       = StringField(required=True)
-    item_quantity   = DecimalField(required=True)
-    item_unit       = StringField(required=True, max_length=2, choices=UNIT_CHOICES, default="KG")
+    item_unit_price = DecimalField() # we store the price here, if the price changes after order
+    item_count      = DecimalField()
+    item_name       = StringField()
+    item_quantity   = DecimalField()
+    item_unit       = StringField(choices=UNIT_CHOICES, default="KG")
     item_id         = ReferenceField(Product)
 
 ###############################################################################################################
@@ -265,11 +266,11 @@ ORDER_STATUS_OPTIONS = (
 
 class Order(Document):
     customer_id         = ReferenceField(UserProfile)
-    ordered_items       = ListField(EmbeddedDocumentField(CartItem))
     order_date          = DateTimeField(default=datetime.datetime.now)
     order_total_amount  = DecimalField()   # total includes shipping, tax and discounts if any
     order_cart_amount   = DecimalField()   # cart amount
     order_status        = StringField(min_length=2, max_length=3, choices=ORDER_STATUS_OPTIONS, default='OP')
+    ordered_items       = ListField(EmbeddedDocumentField(CartItem))
     delivery_info       = EmbeddedDocumentField(Delivery)
     payment_info        = EmbeddedDocumentField(Payment)
 

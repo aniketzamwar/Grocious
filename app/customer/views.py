@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from django.contrib import messages
-from app.models import DoesNotExist, CartItem
+from mongoengine import DoesNotExist
+from app.models import CartItem
 
 from forms import UserProfileForm, AddressForm, LoginForm, OrderForm, PaymentForm, DeliveryForm
 from app.models import UserProfile, Product, Category, Order
@@ -42,8 +43,7 @@ def main(request):
 def index(request):
     if request.user and request.user.is_authenticated():
         return HttpResponseRedirect('/main/')
-    userProfileForm = UserProfileForm()
-    addressForm = AddressForm(UserProfile)
+
     login_form = LoginForm()
     print login_form
     return render(request, 'customer/index.html', { 'loginForm' : login_form })
@@ -274,7 +274,8 @@ def viewCart(request):
 
     data = {
         "status" : 0
-    };
+    }
+
     cart = request.session.get('cart',{})
     for key in cart.keys():
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
@@ -285,7 +286,8 @@ def viewCart(request):
                 'price':str(product.price),
                 'unit': product.get_unit_display(),
                 'quantity': str(product.quantity)
-            };
+            }
+
             if "products" not in data:
                 data["products"] = {}
             data["products"][key] = cartItem
@@ -358,7 +360,8 @@ def shippinginfo(request):
                 'price':str(product.price),
                 'unit': product.get_unit_display(),
                 'quantity': str(product.quantity)
-            };
+            }
+
             if "products" not in data:
                 data["products"] = {}
             data["products"][key] = cartItem
@@ -406,12 +409,9 @@ def submitOrder(request):
         product =  Product.objects.only('name', 'desc', 'quantity', 'unit', 'price', 'id').get(id=bson.objectid.ObjectId(key))
         if product:
             orderCartAmount = orderCartAmount + long(cart[key]) * float(product.price)
-            item = CartItem(item_unit_price=product.price,
-                            item_count=cart[key],
-                            item_name=product.name,
-                            item_quantity=product.quantity,
-                            item_unit=product.unit,
-                            item_id=key)
+            item = CartItem(item_unit_price=product.price, item_count=cart[key],
+                            item_name=product.name, item_quantity=product.quantity,
+                            item_unit=product.unit, item_id=key)
             cartItems.append(item)
             print "item", item.to_mongo()
         else:
@@ -420,17 +420,14 @@ def submitOrder(request):
 
     total_amount = orderCartAmount + float(DELIVERY_CHARGES[shippingOption])
 
-    orderForm = OrderForm({'customer_id' : request.user.id,
-                           'order_total_amount': total_amount,
-                           'order_cart_amount': orderCartAmount })
-
+    orderForm = OrderForm({'customer_id' : request.user.id, 'order_total_amount': total_amount, 'order_cart_amount': orderCartAmount })
+    print orderForm
     order = orderForm.save(cartItems, commit=False)
 
     payment = PaymentForm(order,
                           { 'option' : int(request.POST.get('type')),
                             'amount' : total_amount,
-                            'card_digits': request.POST.get('number')[-4:]},
-                           position=5)
+                            'card_digits': request.POST.get('number')[-4:]}, position=5)
 
     shippingAddress['price'] = DELIVERY_CHARGES[shippingOption]
     shippingAddress['option'] = shippingOption
@@ -475,18 +472,6 @@ def getOrderDetails(request, orderId):
         print "\ndbORder tojson", dbOrder.to_json()
         if dbOrder.customer_id.id == request.user.id:
             # order found, process order and add to results
-            '''{
-                "_id": {"$oid": "55ecd809ca289f4216fb0f7b"},
-                "customer_id": {"$oid": "5520e589a8db32b56a23271c"},
-                "ordered_items": [{"item_unit_price": 2.33, "item_count": 1.0, "item_id": {"$oid": "5520eff1a8db32b79abcfbda"}}
-                ],
-                "order_date": {"$date": 1441585161168},
-                "order_total_amount": 2.33, "order_cart_amount": 2.33,
-                "order_status": "OP",
-                "delivery_info": {"option": "SP", "price": 0.0, "fname": "Shruti", "lname": "Zamwar", "line1": "2353 Portland Street,", "city": "PUN", "state": "MAH", "country": "IN", "pincode": 900073},
-                "payment_info": {"option": 3, "amount": 2.33, "trans_id": "c3e0480d-1599-49b3-ae19-bf3886a5d4a5", "card_digits": "6565", "card_transaction_info": {}}
-                }
-            '''
             order = {}
             order['order_total_amount'] = str(dbOrder.order_total_amount)
             order['order_cart_amount']  = str(dbOrder.order_cart_amount)
@@ -503,7 +488,7 @@ def getOrderDetails(request, orderId):
             }
 
             if 'line2' in dbOrder.delivery_info:
-                order['delivery_info']['line2'] = dbOrder.delivery_info.line2;
+                order['delivery_info']['line2'] = dbOrder.delivery_info.line2
 
             order['payment_info'] = {
                 'option'      : dbOrder.payment_info.get_option_display(),
@@ -512,7 +497,17 @@ def getOrderDetails(request, orderId):
                 'card_digits' : "**** **** **** " + dbOrder.payment_info.card_digits,
             }
 
-            order['ordered_items'] = dbOrder.ordered_items.to_json()
+            order['ordered_items'] = []
+
+            for item in dbOrder.ordered_items:
+                order['ordered_items'].append({
+                    'item_unit_price' : str(item.item_unit_price),
+                    'item_count' : str(item.item_count),
+                    'item_name' : item.item_name,
+                    'item_quantity' : str(item.item_quantity),
+                    'item_unit' : item.get_item_unit_display(),
+                    'item_id' : str(item.item_id)
+                })
 
             print "\n\norder", order
             print "\n\n order json dumps", json.dumps(order)
