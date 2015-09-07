@@ -24,6 +24,10 @@ app.config(['$routeProvider',
               templateUrl: '/static/templates/checkout-page.html',
               controller: 'CartCheckoutCtrl',
             }).
+            when('/orderInfo/:oId',{
+              templateUrl: '/static/templates/order-info-page.html',
+              controller: 'OrderInfoCtrl',
+            }).
             otherwise({
                 redirectTo: '/'
             });

@@ -18,12 +18,21 @@ grociousControllers.controller('HeaderCtrl', function($scope){
   $scope.$root.cartCount = 0;
 });
 
-grociousControllers.controller('CartCheckoutCtrl', function($http, $scope){
+grociousControllers.controller('OrderInfoCtrl', function($scope, $routeParams, $http) {
+    $http.get('/orderInfo/' + $routeParams.oId + "/").success(function(data) {
+      $scope.order = angular.fromJson(data.order);
+      console.log($scope.order);
+    });
+});
+
+grociousControllers.controller('CartCheckoutCtrl', function($http, $scope, $location){
         // create a blank object to hold our form information
   			// $scope will allow this to pass between controller and view
   			$scope.deliveryInfo = {};
+        $scope.paymentInfo = {};
         $scope.shippingOptions = [];
-        $scope.products = [];
+        $scope.products = {};
+        $scope.showPriceInfo=false;
 
         // process the form
         $scope.submitShippingForm = function() {
@@ -63,12 +72,55 @@ grociousControllers.controller('CartCheckoutCtrl', function($http, $scope){
   			            } else {
   			            	  // if successful, bind success message to message
   			                $scope.message = data.message;
+                        $scope.showPriceInfo = true;
   			            }
   			    });
         };
+
+        $scope.submitOrder = function() {
+          $http({
+  			       method  : 'POST',
+  			       url     : '/cart/checkout/submitOrder',
+  			       data    : $.param($scope.paymentInfo),  // pass in data as strings
+  			       headers : { 'Content-Type': 'application/x-www-form-urlencoded' }  // set the headers so angular passing info as form data (not request payload)
+  			    }).success(function(data) {
+  			            console.log(data);
+  			            if (!data.success) {
+  			            	  // if not successful, bind errors to error variables
+  			                $scope.errorName = data.errors.name;
+  			            } else {
+  			            	  // if successful, bind success message to message
+  			                $scope.message = data.message;
+                        $scope.transId = data.info.transId;
+                        $scope.orderId = data.info.orderId;
+                        $scope.$root.cartCount = 0;
+                        alert("Congratulations!! Order has been placed.");
+                        $location.path(data.url);
+  			            }
+  			    });
+        };
+
+        $scope.removeItem = function(id, count){
+          $http.get("/cart/delete/" + id).success(function( data ){
+            delete $scope.products[id];
+            if($.isEmptyObject($scope.products)){
+              $scope.products = null;
+            }
+            $scope.$root.cartCount = data.cartCount;
+            $.toaster({ priority : 'warning', message : data.message });
+          });
+        };
+
+        $scope.updateItem = function(id, count){
+          $http.get("/cart/update/"+ id + "/" + count).success(function( data ){
+            $scope.$root.cartCount = data.cartCount;
+            $scope.products[id].count = count;
+            $.toaster({ priority : 'info', message : data.message });
+          });
+        };
 });
 
-grociousControllers.controller('CartCtrl', function($http,$scope){
+grociousControllers.controller('CartCtrl', function($http, $scope){
 
   $scope.getCart = function(){
     $http.get( '/getCart' ).success( function( data ){
@@ -87,7 +139,7 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
       $scope.$root.cartCount = data.cartCount;
       $.toaster({ priority : 'warning', message : data.message });
     });
-  }
+  };
 
   $scope.updateItem = function(id, count){
     $http.get("/cart/update/"+ id + "/" + count).success(function( data ){
@@ -95,8 +147,7 @@ grociousControllers.controller('CartCtrl', function($http,$scope){
       $scope.products[id].count = count;
       $.toaster({ priority : 'info', message : data.message });
     });
-  }
-
+  };
 });
 
 

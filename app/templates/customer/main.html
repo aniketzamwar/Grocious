@@ -34,7 +34,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href="#/mycart">
+            <a href="#/mycart" >
               <span class="glyphicon glyphicon-shopping-cart"></span> Cart
               {% verbatim %}
                 <span class="badge">{{cartCount}}</span>
@@ -82,14 +82,14 @@
       <p class="text-muted" style="text-align:center">Copyright Grocious</p>
     </div>
   </footer>
-  <small><div id="toaster" class="toaster" style="position: fixed; bottom: 10px; left: 10px; width: 400px; z-index: 50000;"></div></small>
+  <div id="toaster" class="toaster" style="position: fixed; bottom: 10px; left: 10px; width: 400px; z-index: 50000;"></div>
   <script type="text/javascript">
   $(document).ready(function(){
     $('body').on('hidden.bs.modal', '.modal', function () {
       $(this).removeData('bs.modal');
     });
 
-    $.toaster({ settings : { "timeout" : 3500 } });
+    $.toaster({ settings : { "timeout" : 5500 } });
   });
   </script>
 </body>
